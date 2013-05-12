@@ -6,7 +6,7 @@ class Frontend extends ApiFrontend {
     function init(){
         parent::init();
         // Keep this if you are going to use database on all pages
-        //$this->dbConnect();
+        $this->dbConnect();
         $this->requires('atk','4.2.0');
 
         // This will add some resources from atk4-addons, which would be located
@@ -32,11 +32,11 @@ class Frontend extends ApiFrontend {
             ;
 
         // If you wish to restrict access to your pages, use BasicAuth class
-        $this->add('BasicAuth')
+        /*$this->add('BasicAuth')
             ->allow('demo','demo')
             // use check() and allowPage for white-list based auth checking
             //->check()
-            ;
+            ;*/
 
         // This method is executed for ALL the pages you are going to add,
         // before the page class is loaded. You can put additional checks
@@ -48,16 +48,17 @@ class Frontend extends ApiFrontend {
         // If you are using a complex menu, you can re-define
         // it and place in a separate class
         $this->add('Menu',null,'Menu')
-            ->addMenuItem('index','Welcome')
-            ->addMenuItem('examples','Bundled Examples')
-            ->addMenuItem('how','Documentation')
-            ->addMenuItem('dbtest','Database Test')
-            ->addMenuItem('authtest','Auth test')
-            ->addMenuItem('logout')
+            ->addMenuItem('index','Home')
+            ->addMenuItem('scoreboard','Scoreboard')
+            ->addMenuItem('scores','Enter Scores')
+            ->addMenuItem('rules','Rules')
+            ->addMenuItem('map','Map')
+            //->addMenuItem('music', 'Music Request')
             ;
 
         $this->addLayout('UserMenu');
     }
+    /*
     function layout_UserMenu(){
         if($this->auth->isLoggedIn()){
             $this->add('Text',null,'UserMenu')
@@ -79,4 +80,5 @@ class Frontend extends ApiFrontend {
         header('Location: '.$this->pm->base_path.'examples');
         exit;
     }
+    */
 }
