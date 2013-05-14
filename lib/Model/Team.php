@@ -9,7 +9,9 @@ class Model_Team extends Model_Table {
 		$this->addField('person2');
 		$this->hasOne('Division');
 		$this->hasOne('Year');
-		$this->addField('created')->defaultValue(date('Y-m-d H:i:s'))->type('datetime');
-		$this->addField('updated')->type('datetime');
+		$this->addField('created')->defaultValue(date('Y-m-d H:i:s'))->type('datetime')->system(true);
+		$this->addField('updated')->type('datetime')->system(true);
+
+		$this->hasMany('Team');
 	}
 }

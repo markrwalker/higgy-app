@@ -5,13 +5,12 @@ class Model_Game extends Model_Table {
 		parent::init();
 
 		$this->hasMany('Team');
-		$this->addField('team_id')->refModel('Model_Team');
-		$this->hasMany('Score');
-		$this->addField('score_id')->refModel('Model_Score');
+		$this->addField('team1_id')->refModel('Model_Team');
+		$this->addField('team2_id')->refModel('Model_Team');
 		$this->hasOne('Field');
 		$this->addField('is_complete')->type('boolean')->defaultValue(false);
-		$this->addField('created')->defaultValue(date('Y-m-d H:i:s'))->type('datetime');
-		$this->addField('updated')->type('datetime');
+		$this->addField('created')->defaultValue(date('Y-m-d H:i:s'))->type('datetime')->system(true);
+		$this->addField('updated')->type('datetime')->system(true);
 	}
 
 	function finishGame() {

@@ -49,6 +49,7 @@ class Frontend extends ApiFrontend {
         // it and place in a separate class
         $this->add('Menu',null,'Menu')
             ->addMenuItem('index','Home')
+            ->addMenuItem('admin','Admin')
             ->addMenuItem('scoreboard','Scoreboard')
             ->addMenuItem('scores','Enter Scores')
             ->addMenuItem('rules','Rules')
