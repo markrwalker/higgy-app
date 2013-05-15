@@ -11,7 +11,12 @@ class page_admin extends Page {
 		$tabs = $this->add('Tabs');
 
 		$tab = $tabs->addTab('Game Admin');
-		$tab->add('CRUD')->setModel('Game');
+		$adminTabs = $tab->add('Tabs');
+		$divisions = $this->add('Model_Division');
+		foreach ($divisions as $d) {
+			$tab = $adminTabs->addTab($d['name']);
+			$tab->add('CRUD')->setModel('Game');
+		}
 
 		$tab = $tabs->addTab('Team Admin');
 		$tab->add('CRUD')->setModel('Team');
