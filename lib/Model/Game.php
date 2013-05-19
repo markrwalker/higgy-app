@@ -9,7 +9,7 @@ class Model_Game extends Model_Table {
 		$this->addField('team2_id')->refModel('Model_Team', 'id');
 		$this->addField('team2_score_id')->refModel('Model_Score','id')->hidden(true);
 		$this->addField('field_id')->refModel('Model_Field');
-		$this->addField('is_complete')->type('boolean')->defaultValue(false)->visible(false);
+		$this->addField('is_complete')->type('boolean')->defaultValue(false);
 		$this->addField('created')->defaultValue(date('Y-m-d H:i:s'))->type('datetime')->system(true);
 		$this->addField('updated')->type('datetime')->system(true);
 
