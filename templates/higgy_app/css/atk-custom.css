@@ -25,3 +25,4 @@ body {background-color: #bfbfbf;}
 .page {background-color: white; padding:15px;}
 .field_status .field_busy {color: red; font-weight: bold;}
 .field_status .field_free {color: green; font-weight: bold;}
+.leaderboard li {margin-bottom:0}

@@ -16,7 +16,44 @@ class page_scoreboard extends Page {
 
 		$divisions = $this->add('Model_Division');
 		foreach ($divisions as $d) {
-			$tab = $tabs->addTabURL($this->api->url('./division',array('divid'=>$d['id'])),$d['name']);
+			$tab = $tabs->addTab($d['name']);
+			$grid = $tab->add('Grid');
+			$grid->addColumn('name');
+			$grid->addColumn('wins');
+			$grid->addColumn('losses');
+			$grid->addColumn('points_for');
+			$grid->addColumn('points_against');
+			$data = array();
+			$div_teams = $this->add('Model_Team')->addCondition('division_id',$d['id']);
+			$div_games = $this->add('Model_Game_Scores')->addCondition('division_id',$d['id']);
+			foreach ($div_teams as $team) {
+				$pts_for = 0;
+				$pts_less = 0;
+				$wins = 0;
+				$losses = 0;
+				foreach ($div_games as $game) {
+					if ($game['team1'] == $team['name']) {
+						$pts_for += $game['team1_score'];
+						$pts_less += $game['team2_score'];
+						if ($game['team1_score'] > $game['team2_score']) {
+							$wins += 1;
+						} else {
+							$losses += 1;						
+						}
+					} elseif ($game['team2'] == $team['name']) {
+						$pts_for += $game['team2_score'];
+						$pts_less += $game['team1_score'];
+						if ($game['team2_score'] > $game['team1_score']) {
+							$wins += 1;
+						} else {
+							$losses += 1;						
+						}
+					}
+				}
+				$data[] = array('name'=>$team['name'],'wins'=>"$wins",'losses'=>"$losses",'points_for'=>"$pts_for",'points_against'=>"$pts_less");
+			}
+			array_sort_by_column($data,"wins",SORT_DESC);
+			$grid->setSource($data);
 		}
 
 		/**** Column 2 ****/
@@ -25,117 +62,97 @@ class page_scoreboard extends Page {
 		$view = $col2->add('View');
 		$divisions = $this->add('Model_Division');
 		foreach ($divisions as $d) {
-			$view->add('H4')->set($d['name']);
-			$teams = $this->add('Model_Team')->addCondition('division_id',$d['id']);
+			$view->add('H5')->set($d['name']);
+			$div_teams = $this->add('Model_Team')->addCondition('division_id',$d['id']);
+			$div_games = $this->add('Model_Game_Scores')->addCondition('division_id',$d['id']);
 			$top_teams = array();
-			foreach ($teams as $team) {
+			foreach ($div_teams as $team) {
 				$pts_for = 0;
 				$pts_less = 0;
 				$wins = 0;
 				$losses = 0;
-				$my_games1 = $this->add('Model_Game')->addCondition('team1_id',$team['id'])->addCondition('is_complete',true);
-				$my_games2 = $this->add('Model_Game')->addCondition('team2_id',$team['id'])->addCondition('is_complete',true);
-
-		        foreach ($my_games1 as $game) {
-		            $pts_for += $game['team1_score'];
-		            $pts_less += $game['team2_score'];
-		            if ($game['team1_score'] > $game['team2_score']) {
-		                $wins += 1;
-		            } else {
-		                $losses += 1;
-		            }
-		        }
-
-		        foreach ($my_games2 as $game) {
-		            $pts_for += $game['team2_score'];
-		            $pts_less += $game['team1_score'];
-		            if ($game['team2_score'] > $game['team1_score']) {
-		                $wins += 1;
-		            } else {
-		                $losses += 1;
-		            }
-		        }
+				foreach ($div_games as $game) {
+					if ($game['team1'] == $team['name']) {
+						if ($game['team1_score'] > $game['team2_score']) {
+							$pts_for += $game['team1_score'];
+							$pts_less += $game['team2_score'];
+							$wins += 1;
+						} else {
+							$pts_for += $game['team1_score'];
+							$pts_less += $game['team2_score'];
+							$losses += 1;						
+						}
+					} elseif ($game['team2'] == $team['name']) {
+						if ($game['team2_score'] > $game['team1_score']) {
+							$pts_for += $game['team2_score'];
+							$pts_less += $game['team1_score'];
+							$wins += 1;
+						} else {
+							$pts_for += $game['team2_score'];
+							$pts_less += $game['team1_score'];
+							$losses += 1;						
+						}
+					}
+				}
 
 				$top_teams[] = array('name'=>$team['name'],'wins'=>"$wins",'losses'=>"$losses");
 			}
 			array_sort_by_column($top_teams,"wins",SORT_DESC);
 			//echo '<pre>'.print_r($top_teams,1).'<pre>';
+			$view->add('Html')->set('<ol class="leaderboard">');
 			for ($i=0;$i<4;$i++) {
-				$view->add('Html')->set($top_teams[$i]['name'].' ('.$top_teams[$i]['wins'].' - '.$top_teams[$i]['losses'].')<br />');
+				$view->add('Html')->set('<li>'.$top_teams[$i]['name'].' ('.$top_teams[$i]['wins'].' - '.$top_teams[$i]['losses'].')</li>');
 			}
+			$view->add('Html')->set('</ol>');
 		}
 
-	}
-
-	function page_division() {
-		$divid = $_GET['divid'];
-		$grid = $this->add('Grid');
-		$grid->addColumn('name');
-		$grid->addColumn('wins');
-		$grid->addColumn('losses');
-		$grid->addColumn('points_for');
-		$grid->addColumn('points_against');
-		$grid->addColumn('expander','details');
-		$data = array();
-		$div_teams = $this->add('Model_Team')->addCondition('division_id',$divid);
-		foreach ($div_teams as $team) {
-			$pts_for = 0;
-			$pts_less = 0;
-			$wins = 0;
-			$losses = 0;
-			$my_games1 = $this->add('Model_Game')->addCondition('team1_id',$team['id'])->addCondition('is_complete',true);
-			$my_games2 = $this->add('Model_Game')->addCondition('team2_id',$team['id'])->addCondition('is_complete',true);
-
-	        foreach ($my_games1 as $game) {
-	            $pts_for += $game['team1_score'];
-	            $pts_less += $game['team2_score'];
-	            if ($game['team1_score'] > $game['team2_score']) {
-	                $wins += 1;
-	            } else {
-	                $losses += 1;
-	            }
-	        }
-
-	        foreach ($my_games2 as $game) {
-	            $pts_for += $game['team2_score'];
-	            $pts_less += $game['team1_score'];
-	            if ($game['team2_score'] > $game['team1_score']) {
-	                $wins += 1;
-	            } else {
-	                $losses += 1;
-	            }
-	        }
-
-			$data[] = array('name'=>$team['name'],'wins'=>"$wins",'losses'=>"$losses",'points_for'=>"$pts_for",'points_against'=>"$pts_less");
-		}
-		array_sort_by_column($data,"wins",SORT_DESC);
-		$grid->setSource($data);
 	}
 
 	/**** Team Details expander ****/
-	function page_division_details() {
-		$this->api->stickyGET('game_id');
+	function page_details() {
+		$my_team = $_GET['name'];
+		echo '<pre>'.print_r($_GET,1).'</pre>';
 
-		$score_form = $this->add('Form');
-		$score_form->addClass('atk-row');
-		$score_form->addSeparator('span4');
-		$score_form->setModel('Game');
-		$score_form->model->load($_GET['game_id']);
-		//$score_form->controller->importField('is_complete')->set(true);
-		$score_form->getElement('is_complete')->set(true);
-		$score_form->addSeparator('span3');
-		$score_form->controller->importFields(
-			$score_form->model->ref('team1_score_id')
-		);
-		$score_form->controller->importFields(
-			$score_form->model->ref('team2_score_id')
-		);
-		$score_form->addSubmit();
+		$grid = $this->add('Grid');
+		$grid->debug();
+		$grid->addColumn('opponent');
+		$grid->addColumn('points_for');
+		$grid->addColumn('points_against');
+		$grid->addColumn('result');
 
-		if ($score_form->isSubmitted()) {
-			$score_form->update();
-			$score_form->js()->univ()->location($this->api->url('../..'))->execute();
+		$data = array();
+		$div_teams = $this->add('Model_Team')->addCondition('division_id',$d['id']);
+		$div_games = $this->add('Model_Game_Scores')->addCondition('division_id',$d['id']);
+		foreach ($div_teams as $team) {
+			if ($team['name'] == $my_team) {
+				continue;
+			}
+			$opponent = $team['name'];
+			$pts_for = 0;
+			$pts_less = 0;
+			$result = '';
+			foreach ($div_games as $game) {
+				if ($game['team1'] == $my_team && $game['team2'] == $team['name']) {
+					$pts_for += $game['team1_score'];
+					$pts_less += $game['team2_score'];
+					if ($game['team1_score'] > $game['team2_score']) {
+						$result = 'W';
+					} else {
+						$result = 'L';						
+					}
+				} elseif ($game['team2'] == $my_team && $game['team1'] == $team['name']) {
+					$pts_for += $game['team2_score'];
+					$pts_less += $game['team1_score'];
+					if ($game['team2_score'] > $game['team1_score']) {
+						$result = 'W';
+					} else {
+						$result = 'L';					
+					}
+				}
+			}
+			$data[] = array('opponent'=>"$opponent",'points_for'=>"$pts_for",'points_against'=>"$pts_less",'result'=>"$result");
 		}
+		$grid->setSource($data);
 	}
 }
 

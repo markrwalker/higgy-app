@@ -1,0 +1,182 @@
+body{
+	-webkit-text-size-adjust:none !important;
+}
+	#logo {
+		float:left;
+		padding-left:1.5em;
+	}
+	.header .ui-btn {
+		margin-top: 2px;
+	}
+	.ui-header .ui-title {
+		color:#333;
+		min-height:2em;
+		text-align:left;
+		font-size:3em;
+		vertical-align:middle;
+		margin: 5px 0px 0px 0px;
+		padding:0;
+		text-overflow:ellipsis;
+		overflow:hidden;
+		white-space:nowrap;
+		outline:0!important
+	}
+	.ui-footer .ui-title {
+		color:#333;
+	}
+	.ui-btn-up-a {
+		background:#716f6f;
+	}
+		.ui-header .ui-title a {
+			display: block;
+			width: 100%;
+			height: 100%;
+		}
+		.ui-header a.menuBtn,
+		.ui-header a.menuBtn span {
+			display: block;
+			width: 35px;
+			height: 34px;
+			margin: 3px 0 0 2px;
+			padding: 0;
+			text-align: left;
+			text-indent: -5000em;
+			border: 0;
+			
+		/*	background: none;
+			border: 0;
+			-moz-border-radius: 0;
+			-webkit-border-radius: 0;
+			border-radius: 0;
+			-moz-box-shadow: none;
+			-webkit-box-shadow: none;
+			box-shadow: none;*/
+		}
+		.ui-header a.menuBtn span {
+			margin: 0;
+			background: transparent url(images/icons-36-white.png) -1367px 0 no-repeat;
+		}
+		.ui-header a.menuBtn span.ui-btn-text {
+			display: block;
+			width: 35px;
+			height: 34px;
+			background: transparent url(images/icons-36-white.png) -1578px -1px no-repeat;
+			border: 0;
+			text-indent: -5000em;
+		}
+	/*h1, h2, h3, h4, h5 {
+		margin: 0;
+		padding: 0;
+		font: normal 2.1em FontSiteSansCondensed, 'Arial Narrow', Helvetica, Arial, sans-serif;
+	}*/
+	p {
+		margin: .75em 0;
+	}
+	.center {
+		margin-left: auto;
+		margin-right: auto;
+		text-align: center;
+	}
+	/*
+	.contentWrap{
+		width:310px;
+		margin: 0 auto;
+		padding:15px 5px 0 5px;
+	}*/
+	#menu{
+		width: 165px;
+		height: 100%;
+		display: block;
+		float: left;
+		margin-left: -175px;
+		background: #222;
+		}
+		#menu ul{
+			margin:0;padding:0;
+			width:inherit;
+			background: #222;
+			}
+			#menu ul li {
+				list-style-type:none;
+				margin:0px 0;
+				/*border-bottom:solid #6d6d6d 1px;*/
+				}
+				#menu ul li a:link, #menu ul li a:visited{
+					border-bottom:solid #333 1px;
+					color:#fff;
+					font-size:14px;
+					font-family:arial;
+					text-decoration:none;
+					width:165px;
+					display:block;
+					padding:10px 0px 10px 10px; 
+					text-shadow: 0px 1px 1px #000000;
+				}
+				#menu ul li a:hover, #menu ul li a:active{
+					background-color:#716f6f;
+				}
+				#menu ul li span.ui-li-count {
+					position: relative;
+					left: 72px;
+					top: -2px;
+					font-size: 11px;
+					padding: .2em .5em;
+				}
+				/*
+				#menu ul li a:hover span.icon{
+					background-position:0 -40px !important;
+				}	
+				#menu li a span.icon{
+					float:right;
+					width:21px;
+					height:20px;
+					background: transparent url(/account/themed/2012/img/mobile/menuIconsSprite.png) 0 0 no-repeat;
+					position:relative;
+					right:20px;
+					top:-2px;
+				}*/
+				.ui-body-c{
+					background:#fff !important;
+				}
+				.active{
+					background-color:#383737;
+					background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(30,29,29,1)), color-stop(21%,rgba(56,55,55,1)));
+					}
+					li.active a span.icon{
+						background-position:0 -20px !important;
+					}
+					#memberDetails{
+						font-size:14px;
+						font-family:arial;
+						padding:0 15px 5px 10px;
+						color:#fff;
+						text-shadow: 0px 1px 1px #000000;
+						width:110px;
+						}
+						#memberDetails h3 {
+							margin: 1em 0;
+							font-family:arial;
+							font-weight:normal;
+							font-size:14px;
+						}
+						#memberDetails span{
+							color:#fff;
+						}
+
+						a.menuBtn{
+							/*background: transparent url(/account/themed/2012/img/mobile/menuBtn.png) top left no-repeat !important;*/
+							width:31px;
+							height:31px;
+							background-size: 30px 30px;
+							/*text-indent:-999em !important;*/
+							display:block !important;
+							-webkit-box-shadow: 0 0px 0 rgba(150,150,150,.3) !important;
+							box-shadow: 0 0px 0 rgba(150,150,150,.3) !important;
+
+						}
+						a.menuBtn .ui-btn-inner{
+							border:none;
+						}
+						a.menuBtn:hover{
+							border:none !important;
+						}
