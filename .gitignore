@@ -3,3 +3,4 @@ atk4-addons
 config.php
 .htaccess
 *.bak
+mobile/config.php
