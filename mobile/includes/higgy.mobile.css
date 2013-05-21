@@ -180,3 +180,8 @@ body{
 						a.menuBtn:hover{
 							border:none !important;
 						}
+.error {
+	border:2px solid red;
+	background-color:#FFC2C2;
+	padding:10px 4px;
+}

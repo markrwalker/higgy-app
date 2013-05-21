@@ -10,7 +10,8 @@ class page_scores extends Page {
 
         $frame = $this->add('Frame');
 
-        $me = $this->add('Model_Team')->tryLoad('1');
+        $frame->add('Html')->set('To Do');
+/*        $me = $this->add('Model_Team')->tryLoad('1');
         $my_teams = $this->add('Model_Team')->addCondition('division_id',$me['division_id']);
         $my_games1 = $this->add('Model_Game')->addCondition('team1_id',$me['id'])->addCondition('is_complete',true);
         $my_games2 = $this->add('Model_Game')->addCondition('team2_id',$me['id'])->addCondition('is_complete',true);
@@ -43,6 +44,6 @@ class page_scores extends Page {
                 $frame->add('P')->set($team['name']);
             }
         }
-
+*/
     }
 }

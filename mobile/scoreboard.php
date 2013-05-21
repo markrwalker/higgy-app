@@ -1,5 +1,5 @@
-<?php include('includes/header.php'); ?>
+<?php require_once('includes/header.php'); ?>
 		<div data-role="content">
 			<p>scoreboard</p>
 		</div><!-- /content -->
-<?php include('includes/footer.php'); ?>
+<?php require_once('includes/footer.php'); ?>

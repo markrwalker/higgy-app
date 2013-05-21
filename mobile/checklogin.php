@@ -1,32 +1,32 @@
 <?php
 
-include('config.php');
+require_once('config.php');
 
-// username and password sent from form
 $password = $_POST['password'];
-$page = $_POST['page'];
-$header = 'Location: index.php';
+if (!empty($_POST['page'])) {
+	$page = $_POST['page'];
+} else {
+	$page = 'myteam';
+}
 
-// To protect MySQL injection (more detail about MySQL injection)
 $password = stripslashes($password);
 $password = mysql_real_escape_string($password);
 
-$sql="SELECT * FROM users WHERE password='$password'";
-$result=mysql_query($sql);
+$sql = "SELECT * FROM users WHERE password = '$password'";
+$result = mysql_query($sql);
 
-// Mysql_num_row is counting table row
-$count=mysql_num_rows($result);
+$count = mysql_num_rows($result);
 
-if ($count==1) {
-	session_register("higgy_user");
-	header($header);
+if ($count == 1) {
+	session_start();
+	$_SESSION['higgy_password'] = $password;
+	header('Location: '.$page.'.php');
 } else {
-	include('includes/header.php'); ?>
+	require_once('includes/header.php'); ?>
 		<div data-role="content">
-			<?php echo $sql; ?>
-			<p>Wrong PIN. Please contact the deck manager for the correct PIN.</p>
+			<p class="error">Wrong PIN. Please contact the deck manager for the correct PIN.</p>
 		</div><!-- /content -->
 <?php 
-	include('includes/footer.php');
+	require_once('includes/footer.php');
 }
 ?>

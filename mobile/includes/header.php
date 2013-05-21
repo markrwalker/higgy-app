@@ -19,6 +19,7 @@
 			<li><a href="scoreboard.php" class="contentLink" data-ajax="false">Scoreboard</a></li>
 			<li><a href="rules.php" class="contentLink" data-ajax="false">Rules</a></li>
 			<li><a href="map.php" class="contentLink" data-ajax="false">Map</a></li>
+			<li><a href="logout.php" class="contentLink" data-ajax="false">Logout</a></li>
 		</ul>
 	</div>
 

@@ -26,109 +26,16 @@ $(document).delegate("#main", "pageinit", function() {
 
 });
 
-$('#menu, .pages').live("swipeleft", function(){
-	if (menuStatus){
-	$(".ui-page-active").animate({
-		marginLeft: "0px"
-	  }, 300, function(){menuStatus = false});
-	  }
-});
-
-$('.pages').live("swiperight", function(){
-	if (!menuStatus){
-	$(".ui-page-active").animate({
-		marginLeft: "165px"
-	  }, 300, function(){menuStatus = true});
-	  }
-});
-
-$('div[data-role="page"]').live('pagebeforeshow',function(event, ui){
-	menuStatus = false;
-	$(".pages").css("margin-left","0");
-});
-
 // Menu behaviour
-$("#menu li a").click(function(){
+$("a.contentLink").click(function(){
+	alert("hello");
 //	$("#menu").animate({marginLeft: "0px"}, 100);
 	var p = $(this).parent();
+	console.log(p);
 	if($(p).hasClass('active')){
-		$("#menu li").removeClass('active');
+		$("#menu ul li").removeClass('active');
 	} else {
-		$("#menu li").removeClass('active');
+		$("#menu ul li").removeClass('active');
 		$(p).addClass('active');
 	}
-});
-
-// Tabs
-$('div[data-role="navbar"] a').live('click', function () {
-	$(this).addClass('ui-btn-active');
-	$('div.content_div').hide();
-	$('div#' + $(this).attr('data-href')).show();
-});
-
-// Link to exhibitor detail pages
-/*$('.exhibitor-list li ul li').click(function(){
-	var anchor = $(this).find('h3').html();
-	anchor = anchor.replace(/\s+/g, '');
-	window.location.hash = anchor;
-});
-*/
-
-// Link to schedule detail pages
-$('#schedule-grid li').click(function(){
-	var anchor = $(this).attr('id');
-	anchor = anchor.replace(/\s+/g, '');
-	window.location.hash = anchor;
-});
-
-$(document).delegate(".alpha-list", "pageinit", function() {
-	$('#slider').sliderNav({});
-});
-
-//$(document).on(".schedule", "pageinit", function() {
-//});
-/*
-function deluxeClick(){
-			$("#suites").hide();
-			$("#deluxe").show();
-		}
-
-		function suitesClick(){
-			$("#deluxe").hide();
-			$("#suites").show();
-		}
-*/
-$(function() {
-	$(document).delegate('#tab-nav a', 'click', function() {
-	    $('#tab-nav a').removeClass("active");
-		$(this).addClass("active");
-	    $('#tab-content').removeClass("active");
-        $('#tab-content').children().hide('slow');
-	    $('#'+$(this).attr('data-tab')).show('slow');
-          //  $("html,body").animate({scrollTop:0},500);
-        $(this).addClass("ui-btn-active");
-		$('#track span').html('All');
-	});
-	
-	$(document).delegate('#track-select', 'click', function() {
-	    $('#track-menu').slideToggle('slow');
-	});
-
-	$(document).delegate('#track-menu li', 'touchend', function() {
-		if ($(this).attr('id') == 'All') {
-			$('#tab-content ul li').slideDown('slow');
-			$('#track span').html('All');
-		} else {
-			$('#tab-content ul li').slideUp();
-			$('#tab-content ul li.'+$(this).attr('id')).slideDown();
-
-			$('#track span').html($(this).html());
-		}
-		setTimeout(function(){ $('#track-menu').slideToggle('slow'); }, 100);
-	    
-	});
-
-	$(document).delegate('#map-select', 'click', function() {
-	    $('.map-type').slideToggle('slow');
-	});
 });
