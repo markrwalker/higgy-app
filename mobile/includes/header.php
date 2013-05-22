@@ -15,7 +15,6 @@
 		<ul data-theme="b" data-role="listview">
 			<li><a href="index.php" class="contentLink" data-ajax="false">Home</a></li>
 			<li><a href="myteam.php" class="contentLink" data-ajax="false">My Team</a></li>
-			<li><a href="scores.php" class="contentLink" data-ajax="false">Enter Scores</a></li>
 			<li><a href="scoreboard.php" class="contentLink" data-ajax="false">Scoreboard</a></li>
 			<li><a href="rules.php" class="contentLink" data-ajax="false">Rules</a></li>
 			<li><a href="map.php" class="contentLink" data-ajax="false">Map</a></li>
@@ -27,6 +26,5 @@
 
 		<div data-role="header">
 			<a href="#" class="showMenu menuBtn">Menu</a>
-			<img id="logo" src="/higgy-app/templates/higgy_app/images/logo.png" />
 			<h1>Higgyball Scoresheet App</h1>
 		</div><!-- /header -->

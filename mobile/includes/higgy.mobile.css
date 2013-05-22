@@ -10,17 +10,16 @@ body{
 	}
 	.ui-header .ui-title {
 		color:#333;
-		min-height:2em;
-		text-align:left;
-		font-size:3em;
-		vertical-align:middle;
-		margin: 5px 0px 0px 0px;
-		padding:0;
-		text-overflow:ellipsis;
-		overflow:hidden;
-		white-space:nowrap;
-		outline:0!important
+		white-space: normal;
 	}
+	/*.ui-header .ui-title {
+		display: block;
+		width: 156px;
+		height: 33px;
+		margin: 8px auto 5px;
+		background: url(/account/themed/2012/img/mobile/hostingcon.png) top left no-repeat;
+		text-indent: -5000em;
+	}*/
 	.ui-footer .ui-title {
 		color:#333;
 	}

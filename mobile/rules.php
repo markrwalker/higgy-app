@@ -1,6 +1,6 @@
 <?php include('includes/header.php'); ?>
 		<div data-role="content">
-			<p>Higgyball rules.</p>
+			<h3>Higgyball Rules</h3>
 			<div data-role="collapsible-set" data-theme="c" data-content-theme="d">
 				<div data-role="collapsible">
 					<h3>Equipment</h3>
@@ -60,4 +60,3 @@
 			</div>
 		</div><!-- /content -->
 <?php include('includes/footer.php'); ?>
-

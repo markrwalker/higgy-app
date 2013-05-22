@@ -1,11 +1,23 @@
 <?php
 	require_once('config.php');
-	session_start();
-	if(!isset($_SESSION['higgy_password'])) {
-		header("Location: login.php?page=myteam");
+	if (isset($_GET['team'])) {
+		$team_name = urldecode($_GET['team']);
 	}
-	$password = $_SESSION['higgy_password'];
-	$sql1 = "SELECT * FROM team INNER JOIN users on team.id = users.team_id WHERE users.password = '$password' LIMIT 1";
+	$sql = "SELECT * FROM team where name = '$team_name' LIMIT 1";
+	$result = mysql_query($sql);
+	$team_data = mysql_fetch_assoc($result);
+	session_start();
+	if (isset($_SESSION['higgy_password'])) {
+		$password = $_SESSION['higgy_password'];
+		$sql = "SELECT * FROM users where team_id = '".$team_data['id']."' LIMIT 1";
+		$result = mysql_query($sql);
+		$user_data = mysql_fetch_assoc($result);
+		if ($password == $user_data['password']) {
+			header("Location: myteam.php");
+		}
+	}
+	
+	$sql1 = "SELECT * FROM team WHERE id = '".$team_data['id']."' LIMIT 1";
 	$result1 = mysql_query($sql1);
 	$my_data = mysql_fetch_assoc($result1);
 	$my_id = $my_data['id'];
@@ -21,7 +33,7 @@
 	$my_wins = 0;
 	$my_losses = 0;
 	$my_game_data = array();
-	$my_teams_played = array();
+	$teams_played = array();
 	$sql2 = "SELECT * FROM game_scores WHERE (team1 = '$my_name' OR team2 = '$my_name')";
 	$result2 = mysql_query($sql2);
 	while ($row = mysql_fetch_assoc($result2)) {
@@ -33,28 +45,28 @@
 		if ($game['team1'] == $my_name) {
 			$my_pts_for += $game['team1_score'];
 			$my_pts_less += $game['team2_score'];
-			$my_teams_played[$i]['team_name'] = $game['team2'];
-			$my_teams_played[$i]['my_score'] = $game['team1_score'];
-			$my_teams_played[$i]['their_score'] = $game['team2_score'];
+			$teams_played[$i]['team_name'] = $game['team2'];
+			$teams_played[$i]['my_score'] = $game['team1_score'];
+			$teams_played[$i]['their_score'] = $game['team2_score'];
 			if ($game['team1_score'] > $game['team2_score']) {
 				$my_wins += 1;
-				$my_teams_played[$i]['result'] = 'W';
+				$teams_played[$i]['result'] = 'W';
 			} else {
 				$my_losses += 1;						
-				$my_teams_played[$i]['result'] = 'L';
+				$teams_played[$i]['result'] = 'L';
 			}
 		} elseif ($game['team2'] == $my_name) {
 			$my_pts_for += $game['team2_score'];
 			$my_pts_less += $game['team1_score'];
-			$my_teams_played[$i]['team_name'] = $game['team1'];
-			$my_teams_played[$i]['my_score'] = $game['team2_score'];
-			$my_teams_played[$i]['their_score'] = $game['team1_score'];
+			$teams_played[$i]['team_name'] = $game['team1'];
+			$teams_played[$i]['my_score'] = $game['team2_score'];
+			$teams_played[$i]['their_score'] = $game['team1_score'];
 			if ($game['team2_score'] > $game['team1_score']) {
 				$my_wins += 1;
-				$my_teams_played[$i]['result'] = 'W';
+				$teams_played[$i]['result'] = 'W';
 			} else {
 				$my_losses += 1;						
-				$my_teams_played[$i]['result'] = 'L';
+				$teams_played[$i]['result'] = 'L';
 			}
 		}
 		$i++;
@@ -67,7 +79,7 @@
 			<p>Points for: <?php echo $my_pts_for; ?><br />
 				Points against: <?php echo $my_pts_less; ?></p>
 				Games played: <?php echo $my_game_count; ?><br />
-<?php foreach ($my_teams_played as $match) { ?>
+<?php foreach ($teams_played as $match) { ?>
 				vs <?php echo $match['team_name'].': '.$match['my_score'].' - '.$match['their_score'].' '.$match['result'].'<br />'; ?>
 <?php } ?>
 			<div data-role="collapsible-set" data-theme="c" data-content-theme="d">
@@ -129,7 +141,6 @@
 					<h3><?php echo $team['name'].' ('.$team_wins.' - '.$team_losses.')'; ?></h3>
 					<div>
 						<strong><?php echo $team['person1'].', '.$team['person2']; ?></strong>
-						<?php if (!in_array_r($team['name'], $my_teams_played)) echo '<div><a href="game.php?id='.$my_id.'&oid='.$team['id'].'" data-role="button" data-rel="dialog" data-transition="slidedown" data-inline="true" data-theme="b">Request Game</a></div>'; ?>
 						<p>Points for: <?php echo $team_pts_for; ?><br />
 							Points against: <?php echo $team_pts_less; ?></p>
 							Games played: <?php echo $team_game_count; ?><br />
@@ -140,14 +151,4 @@
 				</div>
 <?php } ?>
 		</div><!-- /content -->
-<?php
-	function in_array_r($needle, $haystack, $strict = false) {
-		foreach ($haystack as $item) {
-			if (($strict ? $item === $needle : $item == $needle) || (is_array($item) && in_array_r($needle, $item, $strict))) {
-				return true;
-			}
-		}
-		return false;
-	}
-?>
 <?php require_once('includes/footer.php'); ?>
