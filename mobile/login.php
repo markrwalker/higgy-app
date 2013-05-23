@@ -32,9 +32,9 @@
 			<?php if ($error) echo $error; ?>
 			<form name="login" method="post" action="<?php echo $_SERVER['PHP_SELF'].'?page='.$page; ?>" data-ajax="false">
 				<label for="password">Please enter your team's PIN:</label>
-				<input name="password" id="password" value="" type="text">
+     			<input data-clear-btn="true" name="password" id="password" value="" type="number">
 				<input type="hidden" name="page" value="<?php echo $page; ?>">
-				<input type="submit" name="submit" value="Submit" data-theme="c">
+				<input type="submit" name="submit" value="Submit" data-theme="b">
 			</form>
 		</div><!-- /content -->
 <?php require_once('includes/footer.php'); ?>

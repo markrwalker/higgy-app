@@ -1,7 +1,7 @@
 <?php
 	require_once('config.php');
 	session_start();
-	if(!isset($_SESSION['higgy_password'])) {
+	if (!isset($_SESSION['higgy_password'])) {
 		header("Location: login.php?page=myteam");
 	}
 	$password = $_SESSION['higgy_password'];

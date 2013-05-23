@@ -88,6 +88,7 @@ body{
 		display: block;
 		float: left;
 		margin-left: -175px;
+		padding-top: 80px;
 		background: #222;
 		}
 		#menu ul{
@@ -135,7 +136,7 @@ body{
 					top:-2px;
 				}*/
 				.ui-body-c{
-					background:#fff !important;
+					/*background:#fff !important;*/
 				}
 				.active{
 					background-color:#383737;
@@ -183,4 +184,11 @@ body{
 	border:2px solid red;
 	background-color:#FFC2C2;
 	padding:10px 4px;
+}
+img {
+  width: 100%;
+  max-width: 100%;
+}
+.team_score {
+	height: 3em;
 }

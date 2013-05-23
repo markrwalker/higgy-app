@@ -9,6 +9,7 @@
 	<script src="includes/jquery.mobile-1.3.1.min.js"></script>
 	<script type="text/javascript" src="includes/higgy.mobile.js"></script>
 	<script type="text/javascript" src="includes/slidernav.js"></script>
+	</script>
 </head>
 <body>
 	<div id="menu">
@@ -24,7 +25,7 @@
 
 	<div data-role="page" id="main">
 
-		<div data-role="header">
+		<div data-role="header" data-position="fixed">
 			<a href="#" class="showMenu menuBtn">Menu</a>
 			<h1>Higgyball Scoresheet App</h1>
 		</div><!-- /header -->

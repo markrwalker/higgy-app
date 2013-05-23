@@ -31,7 +31,7 @@
 
 		<div data-role="content">
 			<h3>Request A Game</h3>
-			<form  method="POST" action="<?php echo $_SERVER['PHP_SELF'].'#playgame'; ?>">
+			<form  method="POST" action="playgame.php">
 				<fieldset data-role="controlgroup" data-mini="true">
 					<legend>Select your field:</legend>
 <?php foreach ($field_data as $field) { ?>
@@ -46,40 +46,7 @@
 			</form>
 		</div>
 	</div>
-<?php
-	} elseif (isset($_POST['submit_field'])) {
-		$team1_id = $_POST['team1_id'];
-		$team2_id = $_POST['team2_id'];
-		$field_id = $_POST['field_id'];
-		$sql2 = "SELECT name FROM team WHERE id = '$team2_id' LIMIT 1";
-		$result2 = mysql_query($sql2);
-		$team2_data = mysql_fetch_assoc($result2);
-		$sql3 = "INSERT INTO score (score, created, updated) VALUES ('0', now(), now())";
-		$result3 = mysql_query($sql3);
-		$team1_score_id = mysql_insert_id();
-		$sql4 = "INSERT INTO score (score, created, updated) VALUES ('0', now(), now())";
-		$result4 = mysql_query($sql4);
-		$team2_score_id = mysql_insert_id();
-		$sql5 = "INSERT INTO game (team1_id, team1_score_id, team2_id, team2_score_id, field_id, is_complete, created, updated) 
-			VALUES ('$team1_id', '$team1_score_id', '$team2_id', '$team2_score_id', '$field_id', '0', now(), now())";
-		$result5 = mysql_query($sql5);
-		$game_id = mysql_insert_id();
-?>
-	<div data-role="dialog" data-close-btn="none" id="playgame">
-	
-		<div data-role="header" data-theme="d">
-			<h1>Now Playing Against</h1>
-		</div>
-
-		<div data-role="content">
-			<h3>Now Playing Against</h3>
-			<strong><?php echo $team2_data['name']; ?></strong><br />
-			on Field <?php echo $field_id; ?>
-			<form>
-
-			</form>
-		</div>
-	</div>
 <?php } ?>
+
 </body>
 </html>
