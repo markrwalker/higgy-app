@@ -2,7 +2,7 @@
 <head>
 	<title>Higgyball 2013 Scoresheet App</title>
 	<link rel="stylesheet" type="text/css" href="includes/jquery.mobile-1.3.1.min.css" />
-	<link rel="stylesheet" type="text/css" href="includes/jquery.mobile.theme-1.3.1.min.css" />
+	<link rel="stylesheet" type="text/css" href="includes/higgyball2013.min.css" />
 	<link rel="stylesheet" type="text/css" href="includes/higgy.mobile.css" />
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<script src="includes/jquery-1.9.1.min.js"></script>

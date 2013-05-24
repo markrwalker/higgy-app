@@ -32,7 +32,7 @@
 		<div data-role="content">
 			<h3>Request A Game</h3>
 			<form method="POST" action="playgame.php">
-				<fieldset data-role="controlgroup" data-mini="true">
+				<fieldset data-role="controlgroup">
 					<legend>Select your field:</legend>
 <?php foreach ($field_data as $field) { ?>
 					<input name="field_id" id="radio-<?php echo $field['id']; ?>" value="<?php echo $field['id']; ?>" type="radio">

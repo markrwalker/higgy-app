@@ -9,22 +9,10 @@ body{
 		margin-top: 2px;
 	}
 	.ui-header .ui-title {
-		color:#333;
 		white-space: normal;
 	}
-	/*.ui-header .ui-title {
-		display: block;
-		width: 156px;
-		height: 33px;
-		margin: 8px auto 5px;
-		background: url(/account/themed/2012/img/mobile/hostingcon.png) top left no-repeat;
-		text-indent: -5000em;
-	}*/
-	.ui-footer .ui-title {
-		color:#333;
-	}
 	.ui-btn-up-a {
-		background:#716f6f;
+		background:#02195c;
 	}
 		.ui-header .ui-title a {
 			display: block;
@@ -57,7 +45,7 @@ body{
 		}
 		.ui-header a.menuBtn span.ui-btn-text {
 			display: block;
-			width: 35px;
+			width: 34px;
 			height: 34px;
 			background: transparent url(images/icons-36-white.png) -1578px -1px no-repeat;
 			border: 0;
@@ -89,12 +77,12 @@ body{
 		float: left;
 		margin-left: -175px;
 		padding-top: 80px;
-		background: #222;
+		background: #02195c;
 		}
 		#menu ul{
 			margin:0;padding:0;
 			width:inherit;
-			background: #222;
+			background: #02195c;
 			}
 			#menu ul li {
 				list-style-type:none;
@@ -102,7 +90,7 @@ body{
 				/*border-bottom:solid #6d6d6d 1px;*/
 				}
 				#menu ul li a:link, #menu ul li a:visited{
-					border-bottom:solid #333 1px;
+					border-bottom:solid #fff 1px;
 					color:#fff;
 					font-size:14px;
 					font-family:arial;
