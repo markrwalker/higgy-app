@@ -31,7 +31,7 @@
 
 		<div data-role="content">
 			<h3>Request A Game</h3>
-			<form  method="POST" action="playgame.php">
+			<form method="POST" action="playgame.php">
 				<fieldset data-role="controlgroup" data-mini="true">
 					<legend>Select your field:</legend>
 <?php foreach ($field_data as $field) { ?>

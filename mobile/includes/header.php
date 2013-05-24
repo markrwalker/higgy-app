@@ -1,6 +1,6 @@
 <html>
 <head>
-	<title>Higgyball Scoresheet App</title>
+	<title>Higgyball 2013 Scoresheet App</title>
 	<link rel="stylesheet" type="text/css" href="includes/jquery.mobile-1.3.1.min.css" />
 	<link rel="stylesheet" type="text/css" href="includes/jquery.mobile.theme-1.3.1.min.css" />
 	<link rel="stylesheet" type="text/css" href="includes/higgy.mobile.css" />
@@ -27,5 +27,5 @@
 
 		<div data-role="header" data-position="fixed">
 			<a href="#" class="showMenu menuBtn">Menu</a>
-			<h1>Higgyball Scoresheet App</h1>
+			<h1>Higgyball 2013 Scoresheet App</h1>
 		</div><!-- /header -->

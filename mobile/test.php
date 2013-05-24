@@ -1,26 +1,14 @@
 <?php
 	require_once('config.php');
-
 	$divisions = array();
 	$sql1 = "SELECT * FROM division";
 	$result1 = mysql_query($sql1);
 	while ($row = mysql_fetch_assoc($result1)) {
 		$divisions[] = $row;
 	}
-?>
-<?php require_once('includes/header.php'); ?>
-		<div data-role="content">
-			<h3>Scoreboard</h3>
-			<div data-role="collapsible-set" data-theme="c" data-content-theme="d">
-<?php
 	foreach ($divisions as $div) {
 		$div_id = $div['id'];
-?>
-				<div data-role="collapsible">
-					<h3><?php echo $div['name']; ?></h3>
-					<div>
-						<ul data-role="listview" data-inset="true" data-divider-theme="d">
-<?php 
+		echo '<br />'.$div['name'].'</th>';
 		$div_team_data = array();
 		$sql3 = "SELECT * FROM team WHERE division_id = '$div_id'";
 		$result3 = mysql_query($sql3);
@@ -63,18 +51,13 @@
 			unset($result);
 		}
 		array_sort_higgyball($team_data,"wins","losses","points_for","points_against");
+		echo '<table border="1"><tr><th>Name</th><th>Wins</th><th>Losses</th><th>For</th><th>Against</th></tr>';
 		foreach ($team_data as $team) {
-?>
-							<li><a href="team.php?team=<?php echo urlencode($team['name']); ?>"><?php echo $team['name'].' ('.$team['wins'].' - '.$team['losses'].')'; ?></a></li>
-<?php } ?>
-						</ul>
-					</div>
-				</div>
-<?php } ?>
-			</div>
-		</div><!-- /content -->
-<?php require_once('includes/footer.php'); ?>
-<?php
+			echo '<tr><td>'.$team['name'].'</td><td>'.$team['wins'].'</td><td>'.$team['losses'].'</td><td>'.$team['points_for'].'</td><td>'.$team['points_against'].'</td></tr>';
+		} 
+		echo '</table>';
+	} 
+
 	function array_sort_higgyball(&$arr, $col1, $col2, $col3, $col4) {
 		$sort = array();
 		foreach ($arr as $key=>$val) {
@@ -86,4 +69,3 @@
 
 		array_multisort($sort[$col1], SORT_DESC, $sort[$col2], SORT_ASC, $sort[$col3], SORT_DESC, $sort[$col4], SORT_ASC, $arr);
 	}
-?>

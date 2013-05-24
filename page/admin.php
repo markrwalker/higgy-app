@@ -61,7 +61,7 @@ class page_admin extends Page {
 		if ($crud->grid) {
 			$crud->grid->addPaginator(7);
 			$crud->grid->addQuickSearch(array('team1','team2'));
-			$crud->grid->addColumn('expander','enter_score');
+			$crud->grid->addColumn('expander','edit_score');
 		}
 
 		/**** Teams tab ****/

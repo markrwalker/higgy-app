@@ -1,11 +1,10 @@
 <?php
 	require_once('config.php');
-	session_start();
 	$my_name = '';
-	if (!isset($_SESSION['higgy_password'])) {
+	if (!isset($_COOKIE['higgy_password'])) {
 		$my_name = 'Guest User';
 	} else {
-		$password = $_SESSION['higgy_password'];
+		$password = $_COOKIE['higgy_password'];
 		$sql1 = "SELECT * FROM team INNER JOIN users on team.id = users.team_id WHERE users.password = '$password' LIMIT 1";
 		$result1 = mysql_query($sql1);
 		$error = mysql_error();

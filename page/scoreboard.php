@@ -52,7 +52,7 @@ class page_scoreboard extends Page {
 				}
 				$data[] = array('name'=>$team['name'],'wins'=>"$wins",'losses'=>"$losses",'points_for'=>"$pts_for",'points_against'=>"$pts_less");
 			}
-			array_sort_by_column($data,"wins",SORT_DESC);
+			array_sort_higgyball($data,"wins","losses","points_for","points_against");
 			$grid->setSource($data);
 		}
 
@@ -97,7 +97,7 @@ class page_scoreboard extends Page {
 
 				$top_teams[] = array('name'=>$team['name'],'wins'=>"$wins",'losses'=>"$losses");
 			}
-			array_sort_by_column($top_teams,"wins",SORT_DESC);
+			array_sort_higgyball($top_teams,"wins","losses","points_for","points_against");
 			//echo '<pre>'.print_r($top_teams,1).'<pre>';
 			$view->add('Html')->set('<ol class="leaderboard">');
 			for ($i=0;$i<4;$i++) {
@@ -156,13 +156,16 @@ class page_scoreboard extends Page {
 	}
 }
 
-function array_sort_by_column(&$arr, $col, $dir = SORT_ASC) {
-	$sort_col = array();
-	foreach ($arr as $key=> $row) {
-		$sort_col[$key] = $row[$col];
+function array_sort_higgyball(&$arr, $col1, $col2, $col3, $col4) {
+	$sort = array();
+	foreach ($arr as $key=>$val) {
+		$sort[$col1][$key] = $val[$col1];
+		$sort[$col2][$key] = $val[$col2];
+		$sort[$col3][$key] = $val[$col3];
+		$sort[$col4][$key] = $val[$col4];
 	}
 
-	array_multisort($sort_col, $dir, $arr);
+	array_multisort($sort[$col1], SORT_DESC, $sort[$col2], SORT_ASC, $sort[$col3], SORT_DESC, $sort[$col4], SORT_ASC, $arr);
 }
 
 /*

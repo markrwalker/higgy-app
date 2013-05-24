@@ -1,12 +1,12 @@
 <?php
-	if ($_POST['submit']) {
+	if ($_POST['submit_login']) {
 		require_once('config.php');
 
 		$password = $_POST['password'];
 		if (!empty($_POST['page'])) {
 			$page = $_POST['page'];
 		} else {
-			$page = 'myteam';
+			$page = 'index';
 		}
 
 		$password = stripslashes($password);
@@ -18,9 +18,9 @@
 		$count = mysql_num_rows($result);
 
 		if ($count == 1) {
-			session_start();
-			$_SESSION['higgy_password'] = $password;
+			setcookie("higgy_password",$password,time()+3600*24*3,"/");
 			header('Location: '.$page.'.php');
+			exit();
 		} else {
 			$error = "<p class=\"error\">Wrong PIN. Please contact the deck manager for the correct PIN.</p>\n";
 		}
@@ -30,11 +30,11 @@
 <?php require_once('includes/header.php'); ?>
 		<div data-role="content">
 			<?php if ($error) echo $error; ?>
-			<form name="login" method="post" action="<?php echo $_SERVER['PHP_SELF'].'?page='.$page; ?>" data-ajax="false">
+			<form method="post" action="<?php echo $_SERVER['PHP_SELF'].'?page='.$page; ?>" data-ajax="false">
 				<label for="password">Please enter your team's PIN:</label>
      			<input data-clear-btn="true" name="password" id="password" value="" type="number">
 				<input type="hidden" name="page" value="<?php echo $page; ?>">
-				<input type="submit" name="submit" value="Submit" data-theme="b">
+				<input type="submit" name="submit_login" value="Submit" data-theme="b">
 			</form>
 		</div><!-- /content -->
 <?php require_once('includes/footer.php'); ?>

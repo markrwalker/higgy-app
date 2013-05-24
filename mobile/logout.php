@@ -1,8 +1,3 @@
 <?php
-	session_start();
-	session_unset();
-	session_destroy();
-
-	if (empty($_SESSION['higgy_password'])) {
-		header('Location: index.php');
-	}
+	setcookie("higgy_password",$password,time()-3600*24*3,"/");
+	header('Location: index.php');
