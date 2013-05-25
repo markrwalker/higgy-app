@@ -25,7 +25,7 @@
 
 	<div data-role="page" id="main">
 
-		<div data-role="header" data-position="fixed">
+		<div data-role="header">
 			<a href="#" class="showMenu menuBtn">Menu</a>
 			<h1>Higgyball 2013 Scoresheet App</h1>
 		</div><!-- /header -->

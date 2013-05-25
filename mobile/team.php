@@ -81,7 +81,7 @@
 <?php require_once('includes/header.php'); ?>
 		<div data-role="content">
 			<h3><?php echo $my_name.' ('.$my_wins.' - '.$my_losses.')'; ?></h3>
-			<h4><?php echo $my_person1.', '.$my_person2; ?>
+			<h4><?php echo $my_person1.', '.$my_person2; ?><br />
 				<?php echo $my_division_name; ?> Division</h4>
 			<p>Points for: <?php echo $my_pts_for; ?><br />
 				Points against: <?php echo $my_pts_less; ?></p>

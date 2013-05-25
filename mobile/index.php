@@ -15,7 +15,15 @@
 <?php require_once('includes/header.php'); ?>
 		<div data-role="content">
 			<h3>Welcome, <?php echo $my_name; ?>, to Higgyball 2013!</h3>
-			<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed aliquam massa a metus lobortis venenatis. Cras gravida laoreet tristique. Mauris vel purus quis odio viverra luctus. Sed sem nisi, elementum at egestas et, interdum sollicitudin ligula. Phasellus nec felis justo. In hac habitasse platea dictumst. Nam venenatis laoreet justo, sed commodo lacus volutpat a. Aenean quis quam nunc. Cras dolor ligula, laoreet pulvinar ultricies ut, posuere ac nisl. Nullam hendrerit rutrum mauris nec tempor. Proin vestibulum rhoncus diam nec pulvinar. Sed non justo ante.</p>
-			<p>Aliquam vitae felis mi, tempor gravida nunc. Mauris nec risus elit, eu varius risus. Vivamus pulvinar pulvinar orci, non bibendum eros varius non. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla ipsum mauris, vulputate in consequat quis, dignissim vel urna. Sed purus quam, tristique at porttitor sed, feugiat ut urna. Morbi vestibulum pellentesque libero ac hendrerit. Morbi nibh purus, imperdiet id dapibus eu, iaculis egestas tellus. Nullam tempus semper tellus vestibulum consequat. Donec suscipit ipsum eget sem pretium dapibus.</p>
+			<strong>Make sure you check in with the Deck Manager to begin play!</strong>
+			<p>Use the menu icon at the top left to move around the app.</p>
+			<ul>
+				<li><a href="myteam.php">My Team</a> will show you the teams you've played and the teams you need to play.</li>
+				<ul><li>One team starts a game by clicking the name of one of your opponents on your My Team page, request a game, choose your field, and then both teams have to enter the same score afterward to complete the game. If one team doesn't have a phone, they can visit the Deck Manager to complete the game.</li></ul>
+				<li><a href="scoreboard.php">Scoreboard</a> will show you all of the teams in the tournament and their records.</li>
+				<li><a href="rules.php">Rules</a> gives you all of the rules of Higgyball.</li>
+				<li><a href="map.php">Map</a> shows you a handy map of the fields.</li>
+			</ul>
+			<p>Guest Users cannot enter scores, but can keep track of teams and standings on the <a href="scoreboard.php">Scoreboard</a> page.</p>
 		</div><!-- /content -->
 <?php require_once('includes/footer.php'); ?>

@@ -59,11 +59,14 @@ class page_scoreboard extends Page {
 		/**** Column 2 ****/
 		$col2 = $columns->addColumn(3)->add('Frame')->setTitle('Leaderboard');
 
+		$q=$this->api->db->dsql();
+		$q->table('game_scores')->field('count(*)');
+		$col2->add('H4')->set('Completed '.$q.' of 84 games');
 		$view = $col2->add('View');
 		$divisions = $this->add('Model_Division');
 		foreach ($divisions as $d) {
 			$view->add('H5')->set($d['name']);
-			$div_teams = $this->add('Model_Team')->addCondition('division_id',$d['id']);
+			$div_teams = $this->add('Model_Team')->addCondition('division_id',$d['id'])->addCondition('checked_in',true);
 			$div_games = $this->add('Model_Game_Scores')->addCondition('division_id',$d['id']);
 			$top_teams = array();
 			foreach ($div_teams as $team) {

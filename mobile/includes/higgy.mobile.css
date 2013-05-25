@@ -76,7 +76,7 @@ body{
 		display: block;
 		float: left;
 		margin-left: -175px;
-		padding-top: 80px;
+		padding-top: 10px;
 		background: #02195c;
 		}
 		#menu ul{
@@ -101,7 +101,7 @@ body{
 					text-shadow: 0px 1px 1px #000000;
 				}
 				#menu ul li a:hover, #menu ul li a:active{
-					background-color:#716f6f;
+					background-color:#fe020f;
 				}
 				#menu ul li span.ui-li-count {
 					position: relative;

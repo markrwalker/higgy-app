@@ -25,7 +25,9 @@ class page_admin extends Page {
 			$m = $this->add('Model_Game');
 			$crud = $tab->add('CRUD',array('allow_edit'=>false));
 			$crud->setModel($m)->addCondition('field_id',$f['id'])->addCondition('is_complete',false);
-			$games = $this->add('Model_Game')->addCondition('field_id',$f['id']);
+			if ($crud->grid)
+				$crud->add('Button')->set('Refresh')->js('click', $crud->grid->js()->reload());
+			/*$games = $this->add('Model_Game')->addCondition('field_id',$f['id']);
 			$remove_button = false;
 			foreach ($games as $g) {
 				if ($g['is_complete'] == 0) {
@@ -34,7 +36,7 @@ class page_admin extends Page {
 				}
 			}
 			///////////////// FIX //////////////////
-			//if ($remove_button) $crud->add_button->js(true)->hide(true);
+			if ($remove_button) $crud->add_button->js(true)->hide(true);*/
 			if ($crud->grid) {
 				$crud->grid->addColumn('expander','enter_score');
 			}
@@ -58,6 +60,7 @@ class page_admin extends Page {
 		$m = $this->add('Model_Game');
 		$crud = $tab->add('CRUD',array('allow_edit'=>false,'allow_add'=>false));
 		$crud->setModel($m)->addCondition('is_complete',true);
+		$crud->add('Button')->set('Refresh')->js('click', $crud->grid->js()->reload());
 		if ($crud->grid) {
 			$crud->grid->addPaginator(7);
 			$crud->grid->addQuickSearch(array('team1','team2'));
@@ -94,9 +97,16 @@ class page_admin extends Page {
 		$tab = $tabs->addTab('Year Admin');
 		$tab->add('CRUD')->setModel('Year');
 
+		/**** Users tab ****/
+		$tab = $tabs->addTab('Users Admin');
+		$grid = $tab->add('Grid');
+		$grid->setModel('Users');
+		$grid->addPaginator(7);
+		$grid->addQuickSearch(array('team'));
+
 		/**** Column 2 ****/
 		$col2 = $columns->addColumn(3)->add('Frame')->setTitle('Field Status');
-
+		
 		/**** Game Status view ****/
 		$view = $col2->add('View');
 		$status = array();
@@ -118,7 +128,8 @@ class page_admin extends Page {
 				.($s['status']=='Busy'?'<span class="field_busy">'.$s['status'].'</span':'<span class="field_free">'.$s['status'].'</span')
 				.'</p>');
 		}
-		//$view->js(true)->univ()->setInterval($view->js()->reload()->_enclose(),5000);
+		$col2->add('Button')->set('Refresh')->js('click', $view->js()->reload());
+		//$view->js(true)->univ()->setInterval($view->js()->reload()->_enclose(),15000);
 	}
 
 	/**** Enter Score expander ****/

@@ -1,8 +1,9 @@
 <?php
-	if ($_POST['submit_login']) {
+	if (isset($_POST['submit_login']) || isset($_GET['p'])) {
 		require_once('config.php');
 
-		$password = $_POST['password'];
+		if (isset($_POST['submit_login'])) $password = $_POST['password'];
+		if (isset($_GET['p'])) $password = $_GET['p'];
 		if (!empty($_POST['page'])) {
 			$page = $_POST['page'];
 		} else {

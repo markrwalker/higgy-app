@@ -11,7 +11,7 @@
 <?php require_once('includes/header.php'); ?>
 		<div data-role="content">
 			<h3>Scoreboard</h3>
-			<div data-role="collapsible-set" data-theme="c" data-content-theme="d">
+			<div data-role="collapsible-set" data-theme="b" data-content-theme="d">
 <?php
 	foreach ($divisions as $div) {
 		$div_id = $div['id'];

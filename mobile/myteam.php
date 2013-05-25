@@ -1,8 +1,5 @@
 <?php
 	require_once('config.php');
-	if (isset($_GET['p'])) {
-		$_COOKIE['higgy_password'] = $_GET['p'];
-	}
 	if (!isset($_COOKIE['higgy_password'])) {
 		header("Location: login.php?page=myteam");
 		exit();
@@ -21,6 +18,7 @@
 	$my_person2 = $my_data['person2'];
 	$my_division_id = $my_data['division_id'];
 	$my_year_id = $my_data['year_id'];
+	$my_checked_in = $my_data['checked_in'];
 
 	$sqlx = "SELECT name from division where id = $my_division_id LIMIT 1";
 	$resultx = mysql_query($sqlx);
@@ -96,6 +94,9 @@
 ?>
 <?php require_once('includes/header.php'); ?>
 		<div data-role="content">
+<?php if ($my_checked_in == '0') { ?>
+			<h2 class="error"><?php echo $my_name; ?>, please check in with the Deck Manager to begin play!</h2>
+<?php exit(); } ?>
 			<h3><?php echo $my_name.' ('.$my_wins.' - '.$my_losses.')'; ?></h3>
 			<h4><?php echo $my_person1.', '.$my_person2; ?><br />
 				<?php echo $my_division_name; ?> Division</h4>
@@ -111,7 +112,7 @@
 			<div data-role="collapsible-set" data-theme="b" data-content-theme="d">
 <?php 
 	$div_team_data = array();
-	$sql4 = "SELECT * FROM team WHERE division_id = $my_division_id AND team.name NOT IN (
+	$sql4 = "SELECT * FROM team WHERE division_id = $my_division_id AND checked_in = 1 AND team.name NOT IN (
 		SELECT team1 FROM game_scores WHERE team2 = '$my_name'
 	) AND team.name NOT IN (
 		SELECT team2 FROM game_scores WHERE team1 = '$my_name'
@@ -165,24 +166,30 @@
 				}
 			}
 			$i++;
-		}
+		} //foreach $game
 		unset($sql);
 		unset($result);
+		$is_playing = false;
+		$sqlz = "SELECT * FROM game WHERE (team1_id = '".$team['id']."' OR team2_id = '".$team['id']."') AND is_complete = 0";
+		$resultz = mysql_query($sqlz);
+		$count = mysql_num_rows($resultz);
+		if ($count > 0) $is_playing = true;
 ?>
 				<div data-role="collapsible">
 					<h3><?php echo $team['name'].' ('.$team_wins.' - '.$team_losses.')'; ?></h3>
 					<div>
 						<strong><?php echo $team['person1'].', '.$team['person2']; ?></strong>
-						<?php if (!in_array_r($team['name'], $my_teams_played)) echo '<div><a href="setfield.php?id='.$my_id.'&oid='.$team['id'].'" data-role="button" data-rel="dialog" data-transition="slidedown" data-inline="true" data-theme="b">Request Game</a></div>'; ?>
+						<?php if ($is_playing) { echo '<div class="error">Currently playing</div>'; ?>
+						<?php } elseif (!in_array_r($team['name'], $my_teams_played)) { echo '<div><a href="setfield.php?id='.$my_id.'&oid='.$team['id'].'" data-role="button" data-rel="dialog" data-transition="slidedown" data-inline="true" data-theme="b">Request Game</a></div>'; } ?>
 						<p>Points for: <?php echo $team_pts_for; ?><br />
 							Points against: <?php echo $team_pts_less; ?></p>
 							Games played: <?php echo $team_game_count; ?><br />
 <?php foreach ($teams_played as $match) { ?>
 							vs <?php echo $match['team_name'].': '.$match['my_score'].' - '.$match['their_score'].' '.$match['result'].'<br />'; ?>
-<?php } ?>
+<?php } //foreach $match ?>
 					</div>
 				</div>
-<?php } ?>
+<?php } //foreach $team ?>
 			</div>
 		</div><!-- /content -->
 <?php require_once('includes/footer.php'); ?>
