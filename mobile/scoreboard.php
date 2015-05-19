@@ -1,76 +1,85 @@
 <?php
 	require_once('config.php');
-
-	$divisions = array();
-	$sql1 = "SELECT * FROM division";
+	$year = array();
+	$sql1 = "SELECT * FROM `year` WHERE `current` = 1";
 	$result1 = mysql_query($sql1);
-	while ($row = mysql_fetch_assoc($result1)) {
-		$divisions[] = $row;
-	}
+	$year = mysql_fetch_assoc($result1);
 ?>
 <?php require_once('includes/header.php'); ?>
 		<div data-role="content">
 			<h3>Scoreboard</h3>
 			<div data-role="collapsible-set" data-theme="b" data-content-theme="d">
-<?php
-	foreach ($divisions as $div) {
-		$div_id = $div['id'];
-?>
-				<div data-role="collapsible">
-					<h3><?php echo $div['name']; ?></h3>
-					<div>
-						<ul data-role="listview" data-inset="true" data-divider-theme="d">
+				<div>
+					<ul data-role="listview" data-inset="true" data-divider-theme="d">
 <?php 
-		$div_team_data = array();
-		$sql3 = "SELECT * FROM team WHERE division_id = '$div_id'";
+		$teams = array();
+		$sql3 = "SELECT * FROM team WHERE year_id = ".$year['id']." AND checked_in = 1";
 		$result3 = mysql_query($sql3);
 		while ($row = mysql_fetch_assoc($result3)) {
-			$div_team_data[] = $row;
+			$teams[] = $row;
 		}
 		$team_data = array();
-		foreach ($div_team_data as $team) {
-			$team_pts_for = 0;
-			$team_pts_less = 0;
+		foreach ($teams as $team) {
+			$team_plus_minus = 0;
 			$team_wins = 0;
 			$team_losses = 0;
+			$sos = 0;
 			$team_game_data = array();
-			$sql = "SELECT * FROM game_scores WHERE (team1 = '".$team['name']."' OR team2 = '".$team['name']."')";
+			$sql = "SELECT * FROM game_scores WHERE (team1_id = '".$team['id']."' OR team2_id = '".$team['id']."')";
 			$result = mysql_query($sql);
 			while ($row = mysql_fetch_assoc($result)) {
 				$team_game_data[] = $row;
 			}
 			foreach ($team_game_data as $game) {
-				if ($game['team1'] == $team['name']) {
-					$team_pts_for += $game['team1_score'];
-					$team_pts_less += $game['team2_score'];
+				$team2_id = '';
+				if ($game['team1_id'] == $team['id']) {
+					$team2_id = $game['team2_id'];
+					$team_plus_minus += $game['team1_score'];
+					$team_plus_minus -= $game['team2_score'];
 					if ($game['team1_score'] > $game['team2_score']) {
 						$team_wins += 1;
 					} else {
-						$team_losses += 1;						
+						$team_losses += 1;
 					}
-				} elseif ($game['team2'] == $team['name']) {
-					$team_pts_for += $game['team2_score'];
-					$team_pts_less += $game['team1_score'];
+				} elseif ($game['team2_id'] == $team['id']) {
+					$team2_id = $game['team1_id'];
+					$team_plus_minus += $game['team2_score'];
+					$team_plus_minus -= $game['team1_score'];
 					if ($game['team2_score'] > $game['team1_score']) {
 						$team_wins += 1;
 					} else {
-						$team_losses += 1;						
+						$team_losses += 1;
+					}
+				}
+				$sql2 = "SELECT * FROM game_scores WHERE (team1_id = $team2_id OR team2_id = $team2_id)";
+				$result2 = mysql_query($sql2);
+				$opponent_game_data = array();
+				while ($row = mysql_fetch_assoc($result2)) {
+					$opponent_game_data[] = $row;
+				}
+				foreach ($opponent_game_data as $game) {
+					if ($game['team1_id'] == $team2_id) {
+						if ($game['team1_score'] > $game['team2_score']) {
+							$sos += 1;
+						}
+					} elseif ($game['team2_id'] == $team2_id) {
+						if ($game['team2_score'] > $game['team1_score']) {
+							$sos += 1;
+						}
 					}
 				}
 			}
-			$team_data[] = array('name'=>$team['name'],'wins'=>"$team_wins",'losses'=>"$team_losses",'points_for'=>"$team_pts_for",'points_against'=>"$team_pts_less");
+			$team_data[] = array('id'=>$team['id'], 'name'=>$team['name'],'wins'=>"$team_wins",'losses'=>"$team_losses",'plus_minus'=>"$team_plus_minus",'sos'=>"$sos");
 			unset($sql);
 			unset($result);
 		}
-		array_sort_higgyball($team_data,"wins","losses","points_for","points_against");
+		array_sort_higgyball($team_data,"wins","losses","plus_minus","sos");
 		foreach ($team_data as $team) {
 ?>
-							<li><a href="team.php?team=<?php echo urlencode($team['name']); ?>"><?php echo $team['name'].' ('.$team['wins'].' - '.$team['losses'].')'; ?></a></li>
+						<li><a href="team.php?team=<?php echo $team['id']; ?>"><?php echo $team['name'].' ('.$team['wins'].' - '.$team['losses'].')'; ?></a></li>
 <?php } ?>
-						</ul>
-					</div>
+					</ul>
 				</div>
-<?php } ?>
 			</div>
 		</div><!-- /content -->
 <?php require_once('includes/footer.php'); ?>
@@ -84,6 +93,6 @@
 			$sort[$col4][$key] = $val[$col4];
 		}
 
-		array_multisort($sort[$col1], SORT_DESC, $sort[$col2], SORT_ASC, $sort[$col3], SORT_DESC, $sort[$col4], SORT_ASC, $arr);
+		array_multisort($sort[$col1], SORT_DESC, $sort[$col2], SORT_ASC, $sort[$col3], SORT_DESC, $sort[$col4], SORT_DESC, $arr);
 	}
 ?>

@@ -51,7 +51,7 @@ class Frontend extends ApiFrontend {
             ->addMenuItem('index','Home')
             ->addMenuItem('admin','Admin')
             ->addMenuItem('scoreboard','Scoreboard')
-            //->addMenuItem('scores','Enter Scores')
+            ->addMenuItem('mvp','MVP Votes')
             ->addMenuItem('rules','Rules')
             ->addMenuItem('map','Map')
             //->addMenuItem('music', 'Music Request')

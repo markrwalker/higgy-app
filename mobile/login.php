@@ -30,7 +30,7 @@
 ?>
 <?php require_once('includes/header.php'); ?>
 		<div data-role="content">
-			<?php if ($error) echo $error; ?>
+			<?php if (isset($error)) echo $error; ?>
 			<form method="post" action="<?php echo $_SERVER['PHP_SELF'].'?page='.$page; ?>" data-ajax="false">
 				<label for="password">Please enter your team's PIN:</label>
      			<input data-clear-btn="true" name="password" id="password" value="" type="number">

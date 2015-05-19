@@ -14,16 +14,18 @@
 ?>
 <?php require_once('includes/header.php'); ?>
 		<div data-role="content">
-			<h3>Welcome, <?php echo $my_name; ?>, to Higgyball 2013!</h3>
+			<h3>Welcome, <?php echo $my_name; ?>, to Higgyball 2014!</h3>
 			<strong>Make sure you check in with the Deck Manager to begin play!</strong>
 			<p>Use the menu icon at the top left to move around the app.</p>
 			<ul>
-				<li><a href="myteam.php">My Team</a> will show you the teams you've played and the teams you need to play.</li>
-				<ul><li>One team starts a game by clicking the name of one of your opponents on your My Team page, request a game, choose your field, and then both teams have to enter the same score afterward to complete the game. If one team doesn't have a phone, they can visit the Deck Manager to complete the game.</li></ul>
-				<li><a href="scoreboard.php">Scoreboard</a> will show you all of the teams in the tournament and their records.</li>
-				<li><a href="rules.php">Rules</a> gives you all of the rules of Higgyball.</li>
-				<li><a href="map.php">Map</a> shows you a handy map of the fields.</li>
+				<li><a href="myteam.php" data-ajax="false">My Team</a> will show you the teams you've played and the teams you need to play.</li>
+				<ul><li>Start a game by visiting the Deck Manager to get assigned a field. After the game, both teams have to enter the same score to complete the game. If one team doesn't have a phone, they can visit the Deck Manager to give them the score.</li></ul>
+				<li><a href="scoreboard.php" data-ajax="false">Scoreboard</a> will show you all of the teams in the tournament and their records.</li>
+				<li><a href="rules.php" data-ajax="false">Rules</a> gives you all of the rules of Higgyball.</li>
+				<li><a href="map.php" data-ajax="false">Map</a> shows you a handy map of the fields.</li>
+				<li><strong>New!</strong> <a href="mvp.php" data-ajax="false">MVP Voting</a> allows you to vote for the Higgyball11 Male and Female MVPs. Anyone can vote (once!)</li>
+				<li><strong>New!</strong> <a href="camera.php" data-ajax="false">Photo Uploads</a> allows you to take a photo with your phone and upload it to the server. Keep it clean!</li>
 			</ul>
-			<p>Guest Users cannot enter scores, but can keep track of teams and standings on the <a href="scoreboard.php">Scoreboard</a> page.</p>
+			<p>Guest Users cannot enter scores, but can keep track of teams and standings on the <a href="scoreboard.php" data-ajax="false">Scoreboard</a> page.</p>
 		</div><!-- /content -->
 <?php require_once('includes/footer.php'); ?>

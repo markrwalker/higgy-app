@@ -1,6 +1,6 @@
 <html>
 <head>
-	<title>Higgyball 2013 Scoresheet App</title>
+	<title>Higgyball 2014 Scoresheet App</title>
 	<link rel="stylesheet" type="text/css" href="includes/jquery.mobile-1.3.1.min.css" />
 	<link rel="stylesheet" type="text/css" href="includes/higgyball2013.min.css" />
 	<link rel="stylesheet" type="text/css" href="includes/higgy.mobile.css" />
@@ -19,6 +19,8 @@
 			<li><a href="scoreboard.php" class="contentLink" data-ajax="false">Scoreboard</a></li>
 			<li><a href="rules.php" class="contentLink" data-ajax="false">Rules</a></li>
 			<li><a href="map.php" class="contentLink" data-ajax="false">Map</a></li>
+			<li><a href="mvp.php" class="contentLink" data-ajax="false">MVP Voting</a></li>
+			<li><a href="camera.php" class="contentLink" data-ajax="false">Upload Photos</a></li>
 			<li><a href="logout.php" class="contentLink" data-ajax="false">Logout</a></li>
 		</ul>
 	</div>
@@ -27,5 +29,5 @@
 
 		<div data-role="header">
 			<a href="#" class="showMenu menuBtn">Menu</a>
-			<h1>Higgyball 2013 Scoresheet App</h1>
+			<h1>Higgyball 2014 Scoresheet App</h1>
 		</div><!-- /header -->

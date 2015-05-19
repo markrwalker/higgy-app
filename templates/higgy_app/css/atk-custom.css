@@ -26,3 +26,5 @@ body {background-color: #bfbfbf;}
 .field_status .field_busy {color: red; font-weight: bold;}
 .field_status .field_free {color: green; font-weight: bold;}
 .leaderboard li {margin-bottom:0}
+
+.atk-form.atk-row .atk-buttons { text-align: left; }

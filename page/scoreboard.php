@@ -14,101 +14,79 @@ class page_scoreboard extends Page {
 
 		$tabs = $col1->add('Tabs');
 
-		$divisions = $this->add('Model_Division');
-		foreach ($divisions as $d) {
-			$tab = $tabs->addTab($d['name']);
-			$grid = $tab->add('Grid');
-			$grid->addColumn('name');
-			$grid->addColumn('wins');
-			$grid->addColumn('losses');
-			$grid->addColumn('points_for');
-			$grid->addColumn('points_against');
-			$data = array();
-			$div_teams = $this->add('Model_Team')->addCondition('division_id',$d['id']);
-			$div_games = $this->add('Model_Game_Scores')->addCondition('division_id',$d['id']);
-			foreach ($div_teams as $team) {
-				$pts_for = 0;
-				$pts_less = 0;
-				$wins = 0;
-				$losses = 0;
-				foreach ($div_games as $game) {
-					if ($game['team1'] == $team['name']) {
-						$pts_for += $game['team1_score'];
-						$pts_less += $game['team2_score'];
-						if ($game['team1_score'] > $game['team2_score']) {
-							$wins += 1;
-						} else {
-							$losses += 1;						
-						}
-					} elseif ($game['team2'] == $team['name']) {
-						$pts_for += $game['team2_score'];
-						$pts_less += $game['team1_score'];
-						if ($game['team2_score'] > $game['team1_score']) {
-							$wins += 1;
-						} else {
-							$losses += 1;						
+		$d = $this->add('Model_Division')->addCondition('id',5);
+		$grid = $col1->add('Grid');
+		$grid->addColumn('name');
+		$grid->addColumn('wins');
+		$grid->addColumn('losses');
+		$grid->addColumn('plus_minus');
+		$grid->addColumn('sos');
+		$data = array();
+		$div_teams = $this->add('Model_Team')->addCondition('division_id',$d['id'])->addCondition('year_id',2)->addCondition('checked_in',1);
+		foreach ($div_teams as $team) {
+			$wins = 0;
+			$losses = 0;
+			$plus_minus = 0;
+			$sos = 0;
+			$team2 = '';
+			$div_games = $this->api->db->dsql()
+				->table('game_scores')
+				->field('team1')
+				->field('team1_score')
+				->field('team2')
+				->field('team2_score')
+				->where('division_id',$d['id'])
+				->where(array(array('team1',$team['name']),array('team2',$team['name'])));
+			foreach ($div_games as $game) {
+				if ($game['team1'] == $team['name']) {
+					$team2 = $game['team2'];
+					$plus_minus += $game['team1_score'];
+					$plus_minus -= $game['team2_score'];
+					if ($game['team1_score'] > $game['team2_score']) {
+						$wins += 1;
+					} else {
+						$losses += 1;						
+					}
+				} elseif ($game['team2'] == $team['name']) {
+					$team2 = $game['team1'];
+					$plus_minus += $game['team2_score'];
+					$plus_minus -= $game['team1_score'];
+					if ($game['team2_score'] > $game['team1_score']) {
+						$wins += 1;
+					} else {
+						$losses += 1;						
+					}
+				}
+				if (empty($team2)) {
+					continue;
+				} else {
+					$opponent_games = $this->api->db->dsql()
+						->table('game_scores')
+						->field('team1')
+						->field('team1_score')
+						->field('team2')
+						->field('team2_score')
+						->where('division_id',$d['id'])
+						->where(array(array('team1',$team2),array('team2',$team2)));
+					//$opponent_games->debug();
+					//echo '<pre>'.print_r($opponent_games,1).'</pre>'; die();
+					foreach ($opponent_games as $game) {
+						if ($game['team1'] == $team2) {
+							if ($game['team1_score'] > $game['team2_score']) {
+								$sos += 1;
+							}
+						} elseif ($game['team2'] == $team2) {
+							if ($game['team2_score'] > $game['team1_score']) {
+								$sos += 1;
+							}
 						}
 					}
 				}
-				$data[] = array('name'=>$team['name'],'wins'=>"$wins",'losses'=>"$losses",'points_for'=>"$pts_for",'points_against'=>"$pts_less");
 			}
-			array_sort_higgyball($data,"wins","losses","points_for","points_against");
-			$grid->setSource($data);
+			$data[] = array('name'=>$team['name'],'wins'=>"$wins",'losses'=>"$losses",'plus_minus'=>"$plus_minus",'sos'=>"$sos");
 		}
-
-		/**** Column 2 ****/
-		$col2 = $columns->addColumn(3)->add('Frame')->setTitle('Leaderboard');
-
-		$q=$this->api->db->dsql();
-		$q->table('game_scores')->field('count(*)');
-		$col2->add('H4')->set('Completed '.$q.' of 84 games');
-		$view = $col2->add('View');
-		$divisions = $this->add('Model_Division');
-		foreach ($divisions as $d) {
-			$view->add('H5')->set($d['name']);
-			$div_teams = $this->add('Model_Team')->addCondition('division_id',$d['id'])->addCondition('checked_in',true);
-			$div_games = $this->add('Model_Game_Scores')->addCondition('division_id',$d['id']);
-			$top_teams = array();
-			foreach ($div_teams as $team) {
-				$pts_for = 0;
-				$pts_less = 0;
-				$wins = 0;
-				$losses = 0;
-				foreach ($div_games as $game) {
-					if ($game['team1'] == $team['name']) {
-						if ($game['team1_score'] > $game['team2_score']) {
-							$pts_for += $game['team1_score'];
-							$pts_less += $game['team2_score'];
-							$wins += 1;
-						} else {
-							$pts_for += $game['team1_score'];
-							$pts_less += $game['team2_score'];
-							$losses += 1;						
-						}
-					} elseif ($game['team2'] == $team['name']) {
-						if ($game['team2_score'] > $game['team1_score']) {
-							$pts_for += $game['team2_score'];
-							$pts_less += $game['team1_score'];
-							$wins += 1;
-						} else {
-							$pts_for += $game['team2_score'];
-							$pts_less += $game['team1_score'];
-							$losses += 1;						
-						}
-					}
-				}
-
-				$top_teams[] = array('name'=>$team['name'],'wins'=>"$wins",'losses'=>"$losses");
-			}
-			array_sort_higgyball($top_teams,"wins","losses","points_for","points_against");
-			//echo '<pre>'.print_r($top_teams,1).'<pre>';
-			$view->add('Html')->set('<ol class="leaderboard">');
-			for ($i=0;$i<4;$i++) {
-				$view->add('Html')->set('<li>'.$top_teams[$i]['name'].' ('.$top_teams[$i]['wins'].' - '.$top_teams[$i]['losses'].')</li>');
-			}
-			$view->add('Html')->set('</ol>');
-		}
-
+		array_sort_higgyball($data,"wins","losses","plus_minus","sos");
+		$grid->setSource($data);
 	}
 
 	/**** Team Details expander ****/
@@ -168,7 +146,7 @@ function array_sort_higgyball(&$arr, $col1, $col2, $col3, $col4) {
 		$sort[$col4][$key] = $val[$col4];
 	}
 
-	array_multisort($sort[$col1], SORT_DESC, $sort[$col2], SORT_ASC, $sort[$col3], SORT_DESC, $sort[$col4], SORT_ASC, $arr);
+	array_multisort($sort[$col1], SORT_DESC, $sort[$col2], SORT_ASC, $sort[$col3], SORT_DESC, $sort[$col4], SORT_DESC, $arr);
 }
 
 /*

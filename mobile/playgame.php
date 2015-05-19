@@ -85,22 +85,6 @@
 			<h4>Now Playing Against</h4>
 			<strong><?php echo $other_name; ?></strong><br />
 			on Field <?php echo $field_id; ?>
-			<form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>" data-ajax="false">
-				<fieldset class="ui-grid-a">
-					<div class="ui-block-a">
-						<input data-clear-btn="false" name="team1_score" class="team_score" id="team1_score" value="" type="number">
-						<label for="team1_score">Score for <?php echo $team1_name; ?></label>
-						<input type="hidden" name="team1_score_id" value="<?php echo $team1_score_id; ?>">
-					</div>
-					<div class="ui-block-b">
-						<input data-clear-btn="false" name="team2_score" class="team_score" id="team2_score" value="" type="number">
-						<label for="team2_score">Score for <?php echo $team2_name; ?></label>
-						<input type="hidden" name="team2_score_id" value="<?php echo $team2_score_id; ?>">
-					</div>
-				</fieldset>
-				<input type="hidden" name="game_id" value="<?php echo $game_id; ?>">
-				<input type="submit" name="submit_scores" value="Enter Scores" data-theme="b">
-			</form>
 		</div>
 <?php require_once('includes/footer.php'); ?>
 <?php

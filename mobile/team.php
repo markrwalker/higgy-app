@@ -1,9 +1,9 @@
 <?php
 	require_once('config.php');
 	if (isset($_GET['team'])) {
-		$team_name = urldecode($_GET['team']);
+		$team_id = $_GET['team'];
 	}
-	$sql = "SELECT * FROM team where name = '$team_name' LIMIT 1";
+	$sql = "SELECT * FROM team where id = '$team_id' LIMIT 1";
 	$result = mysql_query($sql);
 	$team_data = mysql_fetch_assoc($result);
 
@@ -18,77 +18,88 @@
 		}
 	}
 	
-	$sql1 = "SELECT * FROM team WHERE id = '".$team_data['id']."' LIMIT 1";
-	$result1 = mysql_query($sql1);
-	$my_data = mysql_fetch_assoc($result1);
-	$my_id = $my_data['id'];
-	$my_name = $my_data['name'];
-	$my_person1 = $my_data['person1'];
-	$my_person2 = $my_data['person2'];
-	$my_division_id = $my_data['division_id'];
-	$my_year_id = $my_data['year_id'];
+	$team_id = $team_data['id'];
+	$team_name = $team_data['name'];
+	$team_person1 = $team_data['person1'];
+	$team_person2 = $team_data['person2'];
+	$team_division_id = $team_data['division_id'];
+	$team_year_id = $team_data['year_id'];
 
-	$sqlx = "SELECT name from division where id = $my_division_id LIMIT 1";
-	$resultx = mysql_query($sqlx);
-	$division_data = mysql_fetch_assoc($resultx);
-	$my_division_name = $division_data['name'];
-
-	$my_game_count = 0;
-	$my_pts_for = 0;
-	$my_pts_less = 0;
-	$my_wins = 0;
-	$my_losses = 0;
-	$my_game_data = array();
+	$team_game_count = 0;
+	$team_plus_minus = 0;
+	$team_wins = 0;
+	$team_losses = 0;
+	$team_sos = 0;
+	$team_game_data = array();
 	$teams_played = array();
-	$sql2 = "SELECT * FROM game_scores WHERE (team1 = '$my_name' OR team2 = '$my_name')";
+	$sql2 = "SELECT * FROM game_scores WHERE (team1_id = $team_id OR team2_id = $team_id)";
 	$result2 = mysql_query($sql2);
 	while ($row = mysql_fetch_assoc($result2)) {
-		$my_game_data[] = $row;
+		$team_game_data[] = $row;
 	}
 	$i = 0;
-	foreach ($my_game_data as $game) {
-		$my_game_count++;
-		if ($game['team1'] == $my_name) {
-			$my_pts_for += $game['team1_score'];
-			$my_pts_less += $game['team2_score'];
-			$teams_played[$i]['team_name'] = $game['team2'];
+	foreach ($team_game_data as $game) {
+		$team2_id = '';
+		$team_game_count++;
+		if ($game['team1_id'] == $team_id) {
+			$team2_id = $game['team2_id'];
+			$team_plus_minus += $game['team1_score'];
+			$team_plus_minus -= $game['team2_score'];
+			$teams_played[$i]['opponent'] = $game['team2'];
 			$teams_played[$i]['my_score'] = $game['team1_score'];
 			$teams_played[$i]['their_score'] = $game['team2_score'];
 			if ($game['team1_score'] > $game['team2_score']) {
-				$my_wins += 1;
+				$team_wins += 1;
 				$teams_played[$i]['result'] = 'W';
 			} else {
-				$my_losses += 1;						
+				$team_losses += 1;						
 				$teams_played[$i]['result'] = 'L';
 			}
-		} elseif ($game['team2'] == $my_name) {
-			$my_pts_for += $game['team2_score'];
-			$my_pts_less += $game['team1_score'];
-			$teams_played[$i]['team_name'] = $game['team1'];
+		} elseif ($game['team2_id'] == $team_id) {
+			$team2_id = $game['team1_id'];
+			$team_plus_minus += $game['team2_score'];
+			$team_plus_minus -= $game['team1_score'];
+			$teams_played[$i]['opponent'] = $game['team1'];
 			$teams_played[$i]['my_score'] = $game['team2_score'];
 			$teams_played[$i]['their_score'] = $game['team1_score'];
 			if ($game['team2_score'] > $game['team1_score']) {
-				$my_wins += 1;
+				$team_wins += 1;
 				$teams_played[$i]['result'] = 'W';
 			} else {
-				$my_losses += 1;						
+				$team_losses += 1;						
 				$teams_played[$i]['result'] = 'L';
 			}
 		}
 		$i++;
+		$sql3 = "SELECT * FROM game_scores WHERE (team1_id = $team2_id OR team2_id = $team2_id)";
+		$result3 = mysql_query($sql3);
+		$opponent_game_data = array();
+		while ($row = mysql_fetch_assoc($result3)) {
+			$opponent_game_data[] = $row;
+		}
+		foreach ($opponent_game_data as $game) {
+			if ($game['team1_id'] == $team2_id) {
+				if ($game['team1_score'] > $game['team2_score']) {
+					$team_sos += 1;
+				}
+			} elseif ($game['team2_id'] == $team2_id) {
+				if ($game['team2_score'] > $game['team1_score']) {
+					$team_sos += 1;
+				}
+			}
+		}
 	}
 ?>
 <?php require_once('includes/header.php'); ?>
 		<div data-role="content">
-			<h3><?php echo $my_name.' ('.$my_wins.' - '.$my_losses.')'; ?></h3>
-			<h4><?php echo $my_person1.', '.$my_person2; ?><br />
-				<?php echo $my_division_name; ?> Division</h4>
-			<p>Points for: <?php echo $my_pts_for; ?><br />
-				Points against: <?php echo $my_pts_less; ?></p>
-			<h4>Games played: <?php echo $my_game_count; ?></h4>
-			<ul data-role="listview">
+			<h3><?php echo $team_name.' ('.$team_wins.' - '.$team_losses.')'; ?></h3>
+			<h4><?php echo $team_person1.', '.$team_person2; ?></h4>
+			<p>Games played: <?php echo $team_game_count; ?><br>
+				Plus/Minus: <?php echo $team_plus_minus; ?><br>
+				Strength of Schedule: <?php echo $team_sos; ?></p>
+			<ul data-role="listview" data-inset="true" data-theme="c">
 <?php foreach ($teams_played as $match) { ?>
-				<li>vs <?php echo $match['team_name'].': '.$match['my_score'].' - '.$match['their_score'].' '.$match['result'].'<br />'; ?></li>
+				<li>vs <?php echo $match['opponent'].': '.$match['my_score'].' - '.$match['their_score'].' '.$match['result'].'<br />'; ?></li>
 <?php } ?>
 			</ul>
 		</div><!-- /content -->
