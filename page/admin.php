@@ -57,6 +57,7 @@ class page_admin extends Page {
 		/**** Teams tab ****/
 		$tab = $tabs->addTab('Team Admin');
 		$m = $this->add('Model_Team');
+		$m->setOrder('updated','asc');
 		$crud = $tab->add('CRUD', array('allow_edit'=>false));
 		$crud->setModel($m,null,array('name','person1','person1_gender','person2','person2_gender','checked_in','dropped_out'))->addCondition('year_id',$year_id);
 		if ($crud->isEditing('add')) {

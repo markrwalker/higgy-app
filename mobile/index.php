@@ -14,7 +14,7 @@
 ?>
 <?php require_once('includes/header.php'); ?>
 		<div data-role="content">
-			<h3>Welcome, <?php echo $my_name; ?>, to Higgyball 2014!</h3>
+			<h3>Welcome, <?php echo $my_name; ?>, to Higgyball 2015!</h3>
 			<strong>Make sure you check in with the Deck Manager to begin play!</strong>
 			<p>Use the menu icon at the top left to move around the app.</p>
 			<ul>
@@ -23,8 +23,8 @@
 				<li><a href="scoreboard.php" data-ajax="false">Scoreboard</a> will show you all of the teams in the tournament and their records.</li>
 				<li><a href="rules.php" data-ajax="false">Rules</a> gives you all of the rules of Higgyball.</li>
 				<li><a href="map.php" data-ajax="false">Map</a> shows you a handy map of the fields.</li>
-				<li><strong>New!</strong> <a href="mvp.php" data-ajax="false">MVP Voting</a> allows you to vote for the Higgyball11 Male and Female MVPs. Anyone can vote (once!)</li>
-				<li><strong>New!</strong> <a href="camera.php" data-ajax="false">Photo Uploads</a> allows you to take a photo with your phone and upload it to the server. Keep it clean!</li>
+				<li><a href="mvp.php" data-ajax="false">MVP Voting</a> allows you to vote for the Higgyball11 Male and Female MVPs. Anyone can vote (once!)</li>
+				<li><a href="camera.php" data-ajax="false">Photo Uploads</a> allows you to take a photo with your phone and upload it to the server. Keep it clean!</li>
 			</ul>
 			<p>Guest Users cannot enter scores, but can keep track of teams and standings on the <a href="scoreboard.php" data-ajax="false">Scoreboard</a> page.</p>
 		</div><!-- /content -->
