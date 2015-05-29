@@ -5,9 +5,10 @@
 		exit();
 	}
 	$password = $_COOKIE['higgy_password'];
-	$sql1 = "SELECT * FROM team INNER JOIN users ON team.id = users.team_id WHERE users.password = '$password' LIMIT 1";
+	$sql1 = "SELECT team.* FROM team INNER JOIN users ON team.id = users.team_id WHERE users.password = '$password' LIMIT 1";
 	$result1 = mysql_query($sql1);
 	$my_data = mysql_fetch_assoc($result1);
+
 	if (!$my_data) {
 		header("Location: login.php?page=myteam");
 		exit();
@@ -18,9 +19,10 @@
 	$my_person2 = $my_data['person2'];
 	$my_division_id = $my_data['division_id'];
 	$my_year_id = $my_data['year_id'];
+	$my_past_champion = $my_data['winner'];
 	$my_checked_in = $my_data['checked_in'];
 
-	$sql2 = "SELECT id from game WHERE (team1_id = '$my_id' OR team2_id = '$my_id') AND is_complete = 0 AND field_id != 0 LIMIT 1";
+	$sql2 = "SELECT id from game WHERE (team1_id = '$my_id' OR team2_id = '$my_id') AND is_complete = 0 LIMIT 1";
 	$result2 = mysql_query($sql2);
 	$current_game_data = mysql_fetch_assoc($result2);
 	if ($current_game_data && isset($_COOKIE['game_pending'])) {
@@ -106,17 +108,21 @@
 			}
 		}
 	}
+	$trophies = '';
+	if ($my_past_champion) {
+		$trophies = '<img class="ui-li-icon" src="images/trophy'.$my_past_champion.'.png">';
+	}
 ?>
 <?php require_once('includes/header.php'); ?>
 		<div data-role="content">
 <?php if ($my_checked_in == '0') { ?>
 			<h2 class="error"><?php echo $my_name; ?>, please check in with the Deck Manager to begin play!</h2>
 <?php exit(); } ?>
-			<h3><?php echo $my_name.' ('.$my_wins.' - '.$my_losses.')'; ?></h3>
+			<h3><?php echo $trophies.' '.$my_name.' ('.$my_wins.' - '.$my_losses.')'; ?></h3>
 			<h4><?php echo $my_person1.', '.$my_person2; ?></h4>
 			<p>Games played: <?php echo $my_game_count; ?><br>
-				Plus/Minus: <?php echo $my_plus_minus; ?><br>
-				Strength of Schedule: <?php echo $my_sos; ?></p>
+				Strength of Schedule: <?php echo $my_sos; ?><br>
+				Differential: <?php echo $my_plus_minus; ?></p>
 			<ul data-role="listview" data-inset="true" data-theme="c">
 <?php foreach ($my_teams_played as $match) { ?>
 				<li>vs <?php echo $match['opponent'].': '.$match['my_score'].' - '.$match['their_score'].' '.$match['result'].'<br />'; ?></li>

@@ -19,27 +19,28 @@ class page_scoreboard extends Page {
 		$grid->addColumn('name');
 		$grid->addColumn('wins');
 		$grid->addColumn('losses');
-		$grid->addColumn('plus_minus');
 		$grid->addColumn('sos');
+		$grid->addColumn('differential');
 		$data = array();
-		$div_teams = $this->add('Model_Team')->addCondition('division_id',$d['id'])->addCondition('year_id',2)->addCondition('checked_in',1);
+		$div_teams = $this->add('Model_Team')->addCondition('division_id',$d['id'])->addCondition('year_id',3)->addCondition('checked_in',1);
 		foreach ($div_teams as $team) {
 			$wins = 0;
 			$losses = 0;
 			$plus_minus = 0;
 			$sos = 0;
-			$team2 = '';
+			$team2_id = '';
 			$div_games = $this->api->db->dsql()
 				->table('game_scores')
-				->field('team1')
+				->field('team1_id')
 				->field('team1_score')
-				->field('team2')
+				->field('team2_id')
 				->field('team2_score')
 				->where('division_id',$d['id'])
-				->where(array(array('team1',$team['name']),array('team2',$team['name'])));
+				->where(array(array('team1_id',$team['id']),array('team2_id',$team['id'])))
+				->get();
 			foreach ($div_games as $game) {
-				if ($game['team1'] == $team['name']) {
-					$team2 = $game['team2'];
+				if ($game['team1_id'] == $team['id']) {
+					$team2_id = $game['team2_id'];
 					$plus_minus += $game['team1_score'];
 					$plus_minus -= $game['team2_score'];
 					if ($game['team1_score'] > $game['team2_score']) {
@@ -47,8 +48,8 @@ class page_scoreboard extends Page {
 					} else {
 						$losses += 1;						
 					}
-				} elseif ($game['team2'] == $team['name']) {
-					$team2 = $game['team1'];
+				} elseif ($game['team2_id'] == $team['id']) {
+					$team2_id = $game['team1_id'];
 					$plus_minus += $game['team2_score'];
 					$plus_minus -= $game['team1_score'];
 					if ($game['team2_score'] > $game['team1_score']) {
@@ -57,25 +58,26 @@ class page_scoreboard extends Page {
 						$losses += 1;						
 					}
 				}
-				if (empty($team2)) {
+				if (empty($team2_id)) {
 					continue;
 				} else {
 					$opponent_games = $this->api->db->dsql()
 						->table('game_scores')
-						->field('team1')
+						->field('team1_id')
 						->field('team1_score')
-						->field('team2')
+						->field('team2_id')
 						->field('team2_score')
 						->where('division_id',$d['id'])
-						->where(array(array('team1',$team2),array('team2',$team2)));
+						->where(array(array('team1_id',$team2_id),array('team2_id',$team2_id)))
+						->get();
 					//$opponent_games->debug();
 					//echo '<pre>'.print_r($opponent_games,1).'</pre>'; die();
 					foreach ($opponent_games as $game) {
-						if ($game['team1'] == $team2) {
+						if ($game['team1_id'] == $team2_id) {
 							if ($game['team1_score'] > $game['team2_score']) {
 								$sos += 1;
 							}
-						} elseif ($game['team2'] == $team2) {
+						} elseif ($game['team2_id'] == $team2_id) {
 							if ($game['team2_score'] > $game['team1_score']) {
 								$sos += 1;
 							}
@@ -83,9 +85,9 @@ class page_scoreboard extends Page {
 					}
 				}
 			}
-			$data[] = array('name'=>$team['name'],'wins'=>"$wins",'losses'=>"$losses",'plus_minus'=>"$plus_minus",'sos'=>"$sos");
+			$data[] = array('name'=>$team['name'],'wins'=>"$wins",'losses'=>"$losses",'sos'=>"$sos",'differential'=>"$plus_minus");
 		}
-		array_sort_higgyball($data,"wins","losses","plus_minus","sos");
+		array_sort_higgyball($data,"wins","losses","sos","differential");
 		$grid->setSource($data);
 	}
 

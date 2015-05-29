@@ -8,17 +8,19 @@
 		if (!empty($_POST['select-female'])) {
 			$female = $_POST['select-female'];
 			mysql_query("INSERT INTO `vote` (`name`, `gender`, `ip`) VALUES ('$female', 'F', '$ip_addr')");
+			$fh = fopen('/home/mark/public_html/mobile/log.txt', 'a'); fputs($fh, date('Y-m-d H:i:s')." Deck MVP vote: $female\n"); fclose($fh);
 		}
 		if (!empty($_POST['select-male'])) {
 			$male = $_POST['select-male'];
 			mysql_query("INSERT INTO `vote` (`name`, `gender`, `ip`) VALUES ('$male', 'M', '$ip_addr')");
+			$fh = fopen('/home/mark/public_html/mobile/log.txt', 'a'); fputs($fh, date('Y-m-d H:i:s')." Deck MVP vote: $male\n"); fclose($fh);
 		}
 		echo '<p>Thanks for voting!</p>';
 
 	}
 		$males = array();
 		$females = array();
-		$sql1 = "SELECT `name`, `person1`, `person1_gender`, `person2`, `person2_gender` FROM `team` WHERE `year_id` = 2";
+		$sql1 = "SELECT `name`, `person1`, `person1_gender`, `person2`, `person2_gender` FROM `team` WHERE `year_id` = 3";
 		$result1 = mysql_query($sql1);
 		while ($row = mysql_fetch_assoc($result1)) {
 			//echo '<pre>'.print_r($row,1).'</pre>';
@@ -39,7 +41,8 @@
 					break;
 			}
 		}
-
+		asort($females);
+		asort($males);
 ?>
 <p>&nbsp;</p>
 <p>&nbsp;</p>

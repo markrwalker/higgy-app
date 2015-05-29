@@ -27,29 +27,29 @@ class page_admin extends Page {
 		$incGamesTab = $gamesTabs->addTab('Incomplete Games');
 		$m = $this->add('Model_Game');
 		$incGamesCrud = $incGamesTab->add('CRUD',array('allow_edit'=>false,'allow_add'=>false));
-		$incGamesCrud->setModel($m,null,array('team1','team2'))->addCondition('year_id',$year_id)->addCondition('is_complete',false)->addCondition('field_id',0);
-		$incGamesCrud->add('Button')->set('Refresh')->js('click', $incGamesCrud->grid->js()->reload());
+		$incGamesCrud->setModel($m,null,array('team1','team2','round'))->addCondition('year_id',$year_id)->addCondition('is_complete',false)->addCondition('field_id',0);
 		$incGamesCrud->js('refresh_inc_game_crud',$incGamesCrud->grid->js()->reload());
-			$incGamesCrud->grid->addColumn('expander','add_field');
+		$incGamesCrud->add('Button')->set('Refresh')->js('click', $incGamesCrud->grid->js()->reload());
+		$incGamesCrud->grid->addColumn('expander','add_field');
 
 		/**** In Progress tabs ****/		
 		$progGamesTab = $gamesTabs->addTab('In Progress');
 		$m = $this->add('Model_Game');
 		$m->setOrder('updated','desc');
 		$progGamesCrud = $progGamesTab->add('CRUD',array('allow_edit'=>false,'allow_add'=>false));
-		$progGamesCrud->setModel($m,null,array('team1','team1_score','team2','team2_score','field','is_complete'))->addCondition('year_id',$year_id)->addCondition('is_complete',false)->addCondition('field_id','>',0);
+		$progGamesCrud->setModel($m,null,array('team1','team1_score','team2','team2_score','field','round','is_complete'))->addCondition('year_id',$year_id)->addCondition('is_complete',false)->addCondition('field_id','>',0);
 		$progGamesCrud->js('refresh_prog_game_crud',$progGamesCrud->grid->js()->reload());
-			$progGamesCrud->add('Button')->set('Refresh')->js('click', $progGamesCrud->grid->js()->reload());
-			$progGamesCrud->grid->addColumn('expander','enter_score');
+		$progGamesCrud->add('Button')->set('Refresh')->js('click', $progGamesCrud->grid->js()->reload());
+		$progGamesCrud->grid->addColumn('expander','enter_score');
 
 		/**** Completed Games tab ****/
 		$compGamesTab = $gamesTabs->addTab('Completed Games');
 		$m = $this->add('Model_Game');
 		$m->setOrder('updated','desc');
 		$compGamesCrud = $compGamesTab->add('CRUD',array('allow_edit'=>false,'allow_add'=>false));
-		$compGamesCrud->setModel($m,null,array('team1','team1_score','team2','team2_score','field','is_complete'))->addCondition('year_id',$year_id)->addCondition('is_complete',true);
+		$compGamesCrud->setModel($m,null,array('team1','team1_score','team2','team2_score','field','round','is_complete'))->addCondition('year_id',$year_id)->addCondition('is_complete',true);
+		$compGamesCrud->js('refresh_comp_game_crud',$compGamesCrud->grid->js()->reload());
 		$compGamesCrud->add('Button')->set('Refresh')->js('click', $compGamesCrud->grid->js()->reload());
-		$compGamesCrud->js('refresh_prog_game_crud',$compGamesCrud->grid->js()->reload());
 		$compGamesCrud->grid->addPaginator(7);
 		$compGamesCrud->grid->addQuickSearch(array('team1','team2'));
 		$compGamesCrud->grid->addColumn('expander','edit_score');
@@ -73,10 +73,10 @@ class page_admin extends Page {
 
 		/**** Users tab ****/
 		$tab = $tabs->addTab('Users Admin');
-		$grid = $tab->add('Grid');
-		$grid->setModel('Users');
+		$crud = $tab->add('CRUD');
+		$crud->setModel('Users');
 		//$grid->addPaginator(1);
-		$grid->addQuickSearch(array('team'));
+		//$crud->grid->addQuickSearch(array('team'));
 
 		/**** Divisions tab ****/
 		$tab = $tabs->addTab('Division Admin');

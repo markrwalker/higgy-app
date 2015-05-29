@@ -6,9 +6,14 @@
 	$year = mysql_fetch_assoc($result1);
 ?>
 <?php require_once('includes/header.php'); ?>
+		<style>
+			li:nth-child(14) {
+				border-bottom: 3px solid red;
+			}
+		</style>
 		<div data-role="content">
 			<h3>Scoreboard</h3>
-			<div data-role="collapsible-set" data-theme="b" data-content-theme="d">
+			<div data-role="collapsible-set" data-theme="c" data-content-theme="d">
 				<div>
 					<ul data-role="listview" data-inset="true" data-divider-theme="d">
 <?php 
@@ -69,14 +74,19 @@
 					}
 				}
 			}
-			$team_data[] = array('id'=>$team['id'], 'name'=>$team['name'],'wins'=>"$team_wins",'losses'=>"$team_losses",'plus_minus'=>"$team_plus_minus",'sos'=>"$sos");
+			$team_data[] = array('id'=>$team['id'], 'name'=>$team['name'],'wins'=>"$team_wins",'losses'=>"$team_losses",'plus_minus'=>"$team_plus_minus",'sos'=>"$sos",'winner'=>$team['winner']);
 			unset($sql);
 			unset($result);
 		}
-		array_sort_higgyball($team_data,"wins","losses","plus_minus","sos");
+		array_sort_higgyball($team_data,"wins","losses","sos","plus_minus");
 		foreach ($team_data as $team) {
+			$trophies = '';
+			if ($team['winner']) {
+					$trophies .= '<img class="ui-li-icon ui-li-thumb" src="images/trophy'.$team['winner'].'.png">';
+			}
+
 ?>
-						<li><a href="team.php?team=<?php echo $team['id']; ?>"><?php echo $team['name'].' ('.$team['wins'].' - '.$team['losses'].')'; ?></a></li>
+						<li><a href="team.php?team=<?php echo $team['id']; ?>"><?php echo $trophies.' '.$team['name'].' ('.$team['wins'].' - '.$team['losses'].')'; ?></a></li>
 <?php } ?>
 					</ul>
 				</div>

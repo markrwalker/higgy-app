@@ -4,7 +4,8 @@ class Model_Game extends Model_Table {
 	function init() {
 		parent::init();
 
-		$year_id = $this->api->db->dsql()->table('year')->where('name',date('Y'))->field('id');
+		$year_id = $this->api->db->dsql()->table('year')->where('current', '1')->field('id')->getOne();
+		$team_list = $this->api->db->dsql()->table('team')->where('year_id', $year_id)->field('id')->get();
 
 		$this->addField('team1_id')->refModel('Model_Team', 'id');
 		$this->addField('team1_score_id')->refModel('Model_Score','id')->hidden(true);
@@ -12,6 +13,7 @@ class Model_Game extends Model_Table {
 		$this->addField('team2_score_id')->refModel('Model_Score','id')->hidden(true);
 		$this->addField('field_id')->refModel('Model_Field');
 		$this->addField('year_id')->refModel('Model_Year')->defaultValue($year_id)->hidden(true);
+		$this->addField('round')->type('int')->system(true);
 		$this->addField('is_complete')->type('boolean')->defaultValue(false);
 		$this->addField('created')->defaultValue(date('Y-m-d H:i:s'))->type('datetime')->system(true);
 		$this->addField('updated')->type('datetime')->system(true);

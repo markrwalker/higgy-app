@@ -13,12 +13,16 @@
 		$password = stripslashes($password);
 		$password = mysql_real_escape_string($password);
 
-		$sql = "SELECT * FROM users WHERE password = '$password'";
+		$sql = "SELECT u.*, t.name FROM users u 
+		inner join team t on t.id = u.team_id
+		WHERE u.password = '$password'";
 		$result = mysql_query($sql);
 
 		$count = mysql_num_rows($result);
 
 		if ($count == 1) {
+			$team = mysql_fetch_assoc($result);
+			$fh = fopen('/home/mark/public_html/mobile/log.txt', 'a'); fputs($fh, date('Y-m-d H:i:s')." Login by: ".$team['name']."\n"); fclose($fh);
 			setcookie("higgy_password",$password,time()+3600*24*3,"/");
 			header('Location: '.$page.'.php');
 			exit();

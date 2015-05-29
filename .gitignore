@@ -4,3 +4,5 @@ config.php
 .htaccess
 *.bak
 mobile/config.php
+mobile/uploads/
+log.txt

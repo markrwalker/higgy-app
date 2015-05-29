@@ -15,11 +15,14 @@
 				if (!empty($_POST['notes'])) $notes = mysql_escape_string($_POST['notes']);
 				if (mysql_query("INSERT INTO `uploads` (`filename`, `name`, `notes`, `ip`) VALUES ('$filename', '$name', '$notes', '$ip')")) {
 					$message = '<h3>Thanks for your photo!</h3>';
+					$fh = fopen('/home/mark/public_html/mobile/log.txt', 'a'); fputs($fh, date('Y-m-d H:i:s')." Camera upload: $name | $notes | $filename\n"); fclose($fh);
 				} else {
 					$message = '<h3 class="error">There was a database error, please try again.</h3>'.mysql_error();
+					$fh = fopen('/home/mark/public_html/mobile/log.txt', 'a'); fputs($fh, date('Y-m-d H:i:s')." Camera error: $name | $notes | $filename".mysql_error()."\n"); fclose($fh);
 				}
 			} else {
 				$message = '<h3 class="error">There was a file error, please try again.</h3>';
+				$fh = fopen('/home/mark/public_html/mobile/log.txt', 'a'); fputs($fh, date('Y-m-d H:i:s')." Camera error: $name | $notes | $filename\n"); fclose($fh);
 			}
 		}
 	}

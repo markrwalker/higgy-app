@@ -24,6 +24,7 @@
 	$team_person2 = $team_data['person2'];
 	$team_division_id = $team_data['division_id'];
 	$team_year_id = $team_data['year_id'];
+	$past_champion = $team_data['winner'];
 
 	$team_game_count = 0;
 	$team_plus_minus = 0;
@@ -89,14 +90,18 @@
 			}
 		}
 	}
+	$trophies = '';
+	if ($past_champion) {
+		$trophies = '<img class="ui-li-icon" src="images/trophy'.$past_champion.'.png">';
+	}
 ?>
 <?php require_once('includes/header.php'); ?>
 		<div data-role="content">
-			<h3><?php echo $team_name.' ('.$team_wins.' - '.$team_losses.')'; ?></h3>
+			<h3><?php echo $trophies.' '.$team_name.' ('.$team_wins.' - '.$team_losses.')'; ?></h3>
 			<h4><?php echo $team_person1.', '.$team_person2; ?></h4>
 			<p>Games played: <?php echo $team_game_count; ?><br>
-				Plus/Minus: <?php echo $team_plus_minus; ?><br>
-				Strength of Schedule: <?php echo $team_sos; ?></p>
+				Strength of Schedule: <?php echo $team_sos; ?><br>
+				Differential: <?php echo $team_plus_minus; ?></p>
 			<ul data-role="listview" data-inset="true" data-theme="c">
 <?php foreach ($teams_played as $match) { ?>
 				<li>vs <?php echo $match['opponent'].': '.$match['my_score'].' - '.$match['their_score'].' '.$match['result'].'<br />'; ?></li>

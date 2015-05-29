@@ -28,3 +28,7 @@ body {background-color: #bfbfbf;}
 .leaderboard li {margin-bottom:0}
 
 .atk-form.atk-row .atk-buttons { text-align: left; }
+
+#higgy_app_scoreboard [data-id="13"] td {
+	border-bottom: 3px solid red;
+}
