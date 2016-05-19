@@ -3,6 +3,5 @@ atk4-addons
 config.php
 .htaccess
 *.bak
-mobile/config.php
-mobile/uploads/
+mobile
 log.txt
