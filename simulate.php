@@ -5,7 +5,7 @@
 	error_reporting(E_ALL);
 	require_once('mobile/config.php');
 	global $year_id;
-	$year_id = 3;
+	$year_id = 4;
 
 	$games = array();
 	$sql1 = "SELECT * FROM `game` WHERE `year_id` = $year_id AND `is_complete` = 0";

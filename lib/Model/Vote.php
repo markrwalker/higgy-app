@@ -6,6 +6,7 @@ class Model_Vote extends Model_Table {
 
 		$this->addField('player')->actual('name');
 		$this->addField('gender')->enum(array('M','F'))->hidden(true);
+		$this->addField('year_id')->hidden(true);
 		$this->addField('ip')->defaultValue($_SERVER['REMOTE_ADDR'])->hidden(true);
 		$this->addField('created')->type('datetime')->system(true);
 		$this->addExpression("votes", $this->dsql()

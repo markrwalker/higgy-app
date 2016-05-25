@@ -8,21 +8,24 @@ class page_scoreboard extends Page {
 			$this->api->redirect('index');
 		}*/
 
-		/**** Column 1 ****/
+		$q = $this->api->db->dsql();
+		$q->table('year')->where('current',1)->field('id');
+		$year_id = $q->getOne();
+
 		$columns = $this->add('Columns');
-		$col1 = $columns->addColumn(9)->add('Frame');
 
-		$tabs = $col1->add('Tabs');
+		/**** Column 1 ****/
+		$col1 = $columns->addColumn(9)->add('Frame')->setTitle('Scoreboard');;
 
-		$d = $this->add('Model_Division')->addCondition('id',5);
 		$grid = $col1->add('Grid');
+		$grid->addColumn('rank');
 		$grid->addColumn('name');
 		$grid->addColumn('wins');
 		$grid->addColumn('losses');
 		$grid->addColumn('sos');
 		$grid->addColumn('differential');
 		$data = array();
-		$div_teams = $this->add('Model_Team')->addCondition('division_id',$d['id'])->addCondition('year_id',3)->addCondition('checked_in',1);
+		$div_teams = $this->add('Model_Team')->addCondition('year_id',$year_id)->addCondition('checked_in',1);
 		foreach ($div_teams as $team) {
 			$wins = 0;
 			$losses = 0;
@@ -35,7 +38,6 @@ class page_scoreboard extends Page {
 				->field('team1_score')
 				->field('team2_id')
 				->field('team2_score')
-				->where('division_id',$d['id'])
 				->where(array(array('team1_id',$team['id']),array('team2_id',$team['id'])))
 				->get();
 			foreach ($div_games as $game) {
@@ -67,7 +69,6 @@ class page_scoreboard extends Page {
 						->field('team1_score')
 						->field('team2_id')
 						->field('team2_score')
-						->where('division_id',$d['id'])
 						->where(array(array('team1_id',$team2_id),array('team2_id',$team2_id)))
 						->get();
 					//$opponent_games->debug();
@@ -88,54 +89,124 @@ class page_scoreboard extends Page {
 			$data[] = array('name'=>$team['name'],'wins'=>"$wins",'losses'=>"$losses",'sos'=>"$sos",'differential'=>"$plus_minus");
 		}
 		array_sort_higgyball($data,"wins","losses","sos","differential");
-		$grid->setSource($data);
-	}
-
-	/**** Team Details expander ****/
-	function page_details() {
-		$my_team = $_GET['name'];
-		echo '<pre>'.print_r($_GET,1).'</pre>';
-
-		$grid = $this->add('Grid');
-		$grid->debug();
-		$grid->addColumn('opponent');
-		$grid->addColumn('points_for');
-		$grid->addColumn('points_against');
-		$grid->addColumn('result');
-
-		$data = array();
-		$div_teams = $this->add('Model_Team')->addCondition('division_id',$d['id']);
-		$div_games = $this->add('Model_Game_Scores')->addCondition('division_id',$d['id']);
-		foreach ($div_teams as $team) {
-			if ($team['name'] == $my_team) {
-				continue;
-			}
-			$opponent = $team['name'];
-			$pts_for = 0;
-			$pts_less = 0;
-			$result = '';
-			foreach ($div_games as $game) {
-				if ($game['team1'] == $my_team && $game['team2'] == $team['name']) {
-					$pts_for += $game['team1_score'];
-					$pts_less += $game['team2_score'];
-					if ($game['team1_score'] > $game['team2_score']) {
-						$result = 'W';
-					} else {
-						$result = 'L';						
-					}
-				} elseif ($game['team2'] == $my_team && $game['team1'] == $team['name']) {
-					$pts_for += $game['team2_score'];
-					$pts_less += $game['team1_score'];
-					if ($game['team2_score'] > $game['team1_score']) {
-						$result = 'W';
-					} else {
-						$result = 'L';					
-					}
-				}
-			}
-			$data[] = array('opponent'=>"$opponent",'points_for'=>"$pts_for",'points_against'=>"$pts_less",'result'=>"$result");
+		$i = 1;
+		foreach ($data as &$row) {
+			$row['rank'] = $i;
+			$i++;
 		}
 		$grid->setSource($data);
+
+		/**** Column 2 ****/
+		$col2 = $columns->addColumn(3)->add('Frame')->setTitle('Knockout Tournament');
+		$view = $col2->add('View');
+
+		$q = $this->api->db->dsql();
+		$q->table('settings')->where('setting','round')->field('value');
+		$round = $q->getOne();
+
+		$incompleteGames = array();
+		$q = $this->api->db->dsql();
+		$q->table('game')->where('year_id',$year_id)->where('is_complete',0)->field('id');
+		$incompleteGames = $q->get();
+
+		if (!empty($incompleteGames)) {
+			$view->add('View_Error')->set('Please complete all games before starting the knockout tournament');
+		} else if ($round == 5) {
+			$html = '
+				<table>
+					<tr>
+						<td>&nbsp;</td>
+						<td>1. '.$data[0]['name'].'</td>
+					</tr>
+					<tr>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td>9. '.$data[8]['name'].'</td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td>8. '.$data[7]['name'].'</td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td>4. '.$data[3]['name'].'</td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td>13. '.$data[12]['name'].'</td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td>12. '.$data[11]['name'].'</td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td>5. '.$data[4]['name'].'</td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td>6. '.$data[5]['name'].'</td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td>11. '.$data[10]['name'].'</td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td>14. '.$data[13]['name'].'</td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td>3. '.$data[2]['name'].'</td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td>7. '.$data[6]['name'].'</td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td>10. '.$data[9]['name'].'</td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td>&nbsp;</td>
+						<td>2. '.$data[1]['name'].'</td>
+					</tr>
+				</table>
+			';
+			$view->add('Html')->set($html);
+		} else {
+			$view->add('View_Error')->set('Please complete all rounds before starting the knockout tournament');
+		}
+		$js[] = $grid->js()->reload();
+		$js[] = $view->js()->reload();
+		$col2->add('Button')->set('Refresh')->js('click', $js);
 	}
 }
 
@@ -150,19 +221,3 @@ function array_sort_higgyball(&$arr, $col1, $col2, $col3, $col4) {
 
 	array_multisort($sort[$col1], SORT_DESC, $sort[$col2], SORT_ASC, $sort[$col3], SORT_DESC, $sort[$col4], SORT_DESC, $arr);
 }
-
-/*
-$this->api->stickyGET('id');
-$u = $this->add('Model_User')->load($_GET['id']);
-$crud = $this->add('CRUD');
-$crud->setModel($u->ref('Item'));
-if($crud->grid) {
-	$crud->grid->addColumn('button','found','Mark as Found');
-	if($_GET['found']) {
-		$crud->model->load($_GET['found']);
-		$crud->model->markAsFound();
-		$crud->js(null,$crud->grid->js()->reload())
-			->univ()->alert('Success')->execute();
-	}
-}
-*/
