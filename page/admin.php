@@ -13,6 +13,7 @@ class page_admin extends Page {
 		$year_id = $q->getOne();
 
 		/**** Column 1 ****/
+
 		$columns = $this->add('Columns');
 		$col1 = $columns->addColumn(10)->add('Frame');
 
@@ -58,20 +59,19 @@ class page_admin extends Page {
 
 		/**** Teams tab ****/
 		$tab = $tabs->addTab('Team Admin');
-		$refreshTeamButton = $tab->add('Button')->set('Refresh Teams');
 		$m = $this->add('Model_Team');
 		$m->setOrder('name', 'asc')->setOrder('checked_in', 'asc')->setOrder('dropped_out', 'asc');
 		$crud = $tab->add('CRUD', array('allow_edit'=>false));
-		$crud->setModel($m,null,array('name','person1','person1_gender','person2','person2_gender','checked_in','dropped_out'))->addCondition('year_id',$year_id);
-		$refreshTeamButton->js('click', $crud->grid->js()->reload());
+		$crud->setModel($m,null,array('name','person1','person1_gender','person2','person2_gender','checked_in','dropped_out'))->addCondition('year_id',$year_id)->addCondition('id','!=',999);
 		if ($crud->isEditing('add')) {
-			$crud->form->getElement('division_id')->set(5);
-			$crud->form->getElement('year_id')->set($year_id);
+			$crud->form->getElement('division_id')->set(5)->js(true)->closest('div')->parent('div')->hide();;
+			$crud->form->getElement('year_id')->set($year_id)->js(true)->closest('div')->parent('div')->hide();;
 			$crud->form->getElement('protected')->js(true)->closest('div')->parent('div')->hide();
 		}
 		$crud->js(true)->addClass('refresh_team_crud');
 		$crud->js('refresh_team_crud')->reload();
 		if ($crud->grid) {
+			$crud->grid->addButton('Refresh Teams')->js('click',$crud->grid->js()->reload());
 			$crud->grid->addColumn('expander','edit_team');
 		}
 
@@ -95,6 +95,8 @@ class page_admin extends Page {
 		$tab->add('CRUD')->setModel('Year');
 
 		/**** Column 2 ****/
+
+		/**** Round Status view ****/
 		$col2 = $columns->addColumn(2)->add('Frame')->setTitle('Round Status');
 		$crud = $col2->add('CRUD',array('allow_edit'=>false,'allow_add'=>false,'allow_del'=>false));
 		$crud->setModel('Settings')->addCondition('setting', 'round');
@@ -116,7 +118,7 @@ class page_admin extends Page {
 			}
 		}
 
-		/**** Game Status view ****/
+		/**** Field Status view ****/
 		$view = $col2->add('View');
 		$fields = $this->add('Model_Field');
 		$view->js(true)->addClass('refresh_field_view');
@@ -182,13 +184,17 @@ class page_admin extends Page {
 	/**** Enter Score expander ****/
 	function page_enter_score() {
 		$this->api->stickyGET('game_id');
+		$year_id = $this->api->db->dsql()->table('year')->field('id')->where('current',1)->getOne();
 
 		$score_form = $this->add('Form');
 		$score_form->addClass('atk-row');
 		$score_form->addSeparator('span5');
 		$score_form->setModel('Game');
 		$score_form->model->load($_GET['game_id']);
-		//$score_form->controller->importField('is_complete')->set(true);
+
+		$score_form->getElement('team1_id')->model->addCondition('year_id',$year_id)->setOrder('name','asc');
+		$score_form->getElement('team2_id')->model->addCondition('year_id',$year_id)->setOrder('name','asc');
+
 		$score_form->getElement('is_complete')->set(true);
 		$score_form->addSeparator('span3');
 		$score_form->controller->importFields(
@@ -211,13 +217,17 @@ class page_admin extends Page {
 	/**** Edit Score expander ****/
 	function page_edit_score() {
 		$this->api->stickyGET('game_id');
+		$year_id = $this->api->db->dsql()->table('year')->field('id')->where('current',1)->getOne();
 
 		$score_form = $this->add('Form');
 		$score_form->addClass('atk-row');
 		$score_form->addSeparator('span5');
 		$score_form->setModel('Game');
 		$score_form->model->load($_GET['game_id']);
-		//$score_form->controller->importField('is_complete')->set(true);
+
+		$score_form->getElement('team1_id')->model->addCondition('year_id',$year_id)->setOrder('name','asc');
+		$score_form->getElement('team2_id')->model->addCondition('year_id',$year_id)->setOrder('name','asc');
+
 		$score_form->getElement('is_complete')->set(true);
 		$score_form->addSeparator('span3');
 		$score_form->controller->importFields(
@@ -230,12 +240,12 @@ class page_admin extends Page {
 
 		if ($score_form->isSubmitted()) {
 			$score_form->update();
-			$score_form->js(null,$this->js()->trigger('refresh_comp_game_crud'))->_selector('.refresh_field_view')->trigger('refresh_field_view')->univ()->successMessage('Game Updated')->closeExpander()->execute();
+			$score_form->js(null,$this->js()->trigger('refresh_comp_game_crud'))->univ()->successMessage('Game Updated')->closeExpander()->execute();
 		}
 	}
 
 	/**** Edit Team expander ****/
-	function page_edit_team($year_id) {
+	function page_edit_team() {
 		$this->api->stickyGET('team_id');
 
 		$team_form = $this->add('Form');
