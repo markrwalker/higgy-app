@@ -26,7 +26,7 @@ class Model_Settings extends Model_Table {
 
 	function toggleSetting($settings_id) {
 		$val = $this->load($settings_id)->get('value');
-		$opp = $val == '1' ? '0' : '1';
+		$opp = $val == 'On' ? 'Off' : 'On';
 		$this->load($settings_id)->set('value', $opp)->save();
 	}
 
@@ -209,10 +209,10 @@ class Model_Settings extends Model_Table {
 			$field = $this->get_random_field($team1_id, $team2_id);
 
 			$q = $this->api->db->dsql();
-			$team1_score_id = $q->table('score')->set('score','0')->set('created',$q->expr('NOW()'))->set('updated',$q->expr('NOW()'))->do_insert();
+			$team1_score_id = $q->table('score')->set('score',null)->set('created',$q->expr('NOW()'))->set('updated',$q->expr('NOW()'))->do_insert();
 
 			$q = $this->api->db->dsql();
-			$team2_score_id = $q->table('score')->set('score','0')->set('created',$q->expr('NOW()'))->set('updated',$q->expr('NOW()'))->do_insert();
+			$team2_score_id = $q->table('score')->set('score',null)->set('created',$q->expr('NOW()'))->set('updated',$q->expr('NOW()'))->do_insert();
 
 			$q = $this->api->db->dsql();
 			$game_id = $q

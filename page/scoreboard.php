@@ -86,7 +86,7 @@ class page_scoreboard extends Page {
 					}
 				}
 			}
-			$data[] = array('name'=>$team['name'],'wins'=>"$wins",'losses'=>"$losses",'sos'=>"$sos",'differential'=>"$plus_minus");
+			$data[] = array('id'=>$team['id'],'name'=>$team['name'],'wins'=>"$wins",'losses'=>"$losses",'sos'=>"$sos",'differential'=>"$plus_minus");
 		}
 		array_sort_higgyball($data,"wins","losses","sos","differential");
 		$i = 1;
@@ -95,6 +95,7 @@ class page_scoreboard extends Page {
 			$i++;
 		}
 		$grid->setSource($data);
+		// $grid->addColumn('expander','view_matches');
 
 		/**** Column 2 ****/
 		$col2 = $columns->addColumn(3)->add('Frame')->setTitle('Knockout Tournament');
@@ -208,6 +209,19 @@ class page_scoreboard extends Page {
 		$js[] = $view->js()->reload();
 		$col2->add('Button')->set('Refresh')->js('click', $js);
 	}
+
+	/**** View Matches expander ****/
+	function page_view_matches() {
+		$this->api->stickyGET('scoreboard_id');
+		$year_id = $this->api->db->dsql()->table('year')->field('id')->where('current',1)->getOne();
+
+		$match_form = $this->add('Form');
+		$match_form->addClass('atk-row');
+		$match_form->addSeparator('span5');
+		$match_form->setModel('Team');
+		$match_form->model->load($_GET['scoreboard_id']);
+	}
+
 }
 
 function array_sort_higgyball(&$arr, $col1, $col2, $col3, $col4) {
@@ -221,3 +235,4 @@ function array_sort_higgyball(&$arr, $col1, $col2, $col3, $col4) {
 
 	array_multisort($sort[$col1], SORT_DESC, $sort[$col2], SORT_ASC, $sort[$col3], SORT_DESC, $sort[$col4], SORT_DESC, $arr);
 }
+

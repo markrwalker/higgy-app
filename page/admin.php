@@ -203,6 +203,9 @@ class page_admin extends Page {
 		$score_form->controller->importFields(
 			$score_form->model->ref('team2_score_id')
 		);
+
+		$score_form->js(true, '$("#higgy_app_admin_enter_score_form_name").focus();'); // 'name' is the element for team1_score_id for some reason
+
 		$score_form->addSubmit();
 
 		if ($score_form->isSubmitted()) {

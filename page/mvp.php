@@ -49,7 +49,7 @@ class page_mvp extends Page {
 		}
 
 		$vote_view = $col3->add('View');
-		if ($voting_enabled) {
+		if ($voting_enabled == 'On') {
 			$vote_form = $vote_view->add('Form');
 			$vote_form->setModel('Vote');
 			$vote_form->add('Html')->set('<h2>MVP Voting</h2>');
