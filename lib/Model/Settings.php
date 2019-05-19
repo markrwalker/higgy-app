@@ -16,7 +16,7 @@ class Model_Settings extends Model_Table {
 		$this->round = null;
 		$this->team_data = array();
 		$q = $this->api->db->dsql();
-		$q->table('field')->field('id');
+		$q->table('field')->field('id')->where('active', 1);
 		$fields = $q->get();
 		$this->available_fields = array();
 		foreach ($fields as $field) {
@@ -41,9 +41,10 @@ class Model_Settings extends Model_Table {
 			return "Games are still ongoing. Please add scores to complete all games";
 		}
 
-		if ($round > 5) {
-			return null;
-		} else if ($round <= 5) {
+		// if ($round > 5) {
+		// 	return null;
+		// } else if ($round <= 5) {
+		if ($round) {
 			$q = $this->api->db->dsql();
 			$q->table('team')->field('*')->where('year_id', $this->year_id)->where('dropped_out', 0);
 			if ($round > 1) $q->where('checked_in', 1);
@@ -58,7 +59,7 @@ class Model_Settings extends Model_Table {
 				$team_game_data = array();
 
 				$q = $this->api->db->dsql();
-				$q->table('game_scores')->field('*')->where($q->orExpr()->where('team1_id', $team['id'])->where('team2_id', $team['id']));
+				$q->table('game_scores')->field('*')->where($q->orExpr()->where('team1_id', $team['id'])->where('team2_id', $team['id']))->where('round<', 6);
 				$team_game_data = $q->get();
 
 				$history = array();
@@ -90,7 +91,7 @@ class Model_Settings extends Model_Table {
 					}
 
 					$q = $this->api->db->dsql();			
-					$q->table('game_scores')->field('*')->where($q->orExpr()->where('team1_id', $team2_id)->where('team2_id', $team2_id));
+					$q->table('game_scores')->field('*')->where($q->orExpr()->where('team1_id', $team2_id)->where('team2_id', $team2_id))->where('round<', 6);
 					$opponent_game_data = $q->get();
 
 					foreach ($opponent_game_data as $game) {
@@ -112,6 +113,7 @@ class Model_Settings extends Model_Table {
 
 			foreach ($team1_data as $data) {
 				$this->team_data[$data['id']] = array(
+					'id' => $data['id'],
 					'name' => $data['name'],
 					'wins' => $data['wins'],
 					'losses' => $data['losses'],
@@ -133,40 +135,159 @@ class Model_Settings extends Model_Table {
 	}
 
 	private function generate_round($team_data) {
-
-		$segments = array();
-		$x = 0;
-		$wl = '';
-		if (count($team_data) % 2 != 0 && $this->round == 1) {
-			$team_data = array(999=>array('wins'=>0,'losses'=>0,'plus_minus'=>0,'sos'=>0,'protected'=>0)) + $team_data;
-		} else if (count($team_data) % 2 != 0 && $this->round > 1) {
-			$team_data = array(999=>array('wins'=>0,'losses'=>99,'plus_minus'=>-999,'sos'=>0,'protected'=>0)) + $team_data;
-		}
-		foreach ($team_data as $id=>$team) {
-			if ($wl != $team['wins'].'-'.$team['losses']) {
-				$wl = $team['wins'].'-'.$team['losses'];
-				$x++;
-			}
-			$segments[$x][] = $id;//.' '.$team['wins'].'-'.$team['losses'].' '.$team['sos'].' '.$team['plus_minus'];
-		}
-		$segments = array_reverse($segments, true);
-		$n = count($segments);
-		for ($i=$n; $i>0; $i--) {
-			$segments[$i] = array_reverse($segments[$i]);
-		}
-		for ($i=$n; $i>0; $i--) {
-			if (count($segments[$i]) % 2 != 0) {
-				$move = $segments[$i][count($segments[$i])-1];
-				unset($segments[$i][count($segments[$i])-1]);
-				array_unshift($segments[$i-1], $move);
-			}
-		}
-
-		$games = array();
-		foreach ($segments as $record=>$ids) {
-			if (!empty($ids)) {
-				$matchups = $this->generate_matchups($ids);
+		if ($this->round == 6) {
+			$team_data= array_values($team_data);
+			$matchups = array(
+				array(
+					'team1_id' => $team_data[8]['id'],
+					'team2_id' => $team_data[7]['id'],
+				),
+				array(
+					'team1_id' => $team_data[3]['id'],
+					'team2_id' => $team_data[12]['id'],
+				),
+				array(
+					'team1_id' => $team_data[11]['id'],
+					'team2_id' => $team_data[4]['id'],
+				),
+				array(
+					'team1_id' => $team_data[5]['id'],
+					'team2_id' => $team_data[10]['id'],
+				),
+				array(
+					'team1_id' => $team_data[13]['id'],
+					'team2_id' => $team_data[2]['id'],
+				),
+				array(
+					'team1_id' => $team_data[6]['id'],
+					'team2_id' => $team_data[9]['id'],
+				),
+			);
+			$games = $this->generate_games($matchups);
+		} else  if ($this->round == 7) {
+			$team_data= array_values($team_data);
+			$q = $this->api->db->dsql();
+			$q->table('game_scores')->field('winner_id')->where('round', 6)->order('game_id ASC');
+			$winners = $q->get();
+			if ($winners) {
+				$matchups = array(
+					array(
+						'team1_id' => $team_data[0]['id'],
+						'team2_id' => $winners[0]['winner_id'],
+					),
+					array(
+						'team1_id' => $winners[1]['winner_id'],
+						'team2_id' => $winners[2]['winner_id'],
+					),
+					array(
+						'team1_id' => $winners[3]['winner_id'],
+						'team2_id' => $winners[4]['winner_id'],
+					),
+					array(
+						'team1_id' => $winners[5]['winner_id'],
+						'team2_id' => $team_data[1]['id'],
+					),
+				);
 				$games = $this->generate_games($matchups);
+			}
+		} else  if ($this->round == 8) {
+			$q = $this->api->db->dsql();
+			$q->table('game_scores')->field('winner_id')->where('round', 7)->order('game_id ASC');
+			$winners = $q->get();
+			if ($winners) {
+				$matchups = array(
+					array(
+						'team1_id' => $winners[0]['winner_id'],
+						'team2_id' => $winners[1]['winner_id'],
+					),
+					array(
+						'team1_id' => $winners[2]['winner_id'],
+						'team2_id' => $winners[3]['winner_id'],
+					),
+				);
+				$games = $this->generate_games($matchups);
+			}
+		} else if ($this->round == 9) {
+			$q = $this->api->db->dsql();
+			$q->table('game_scores')->field('*')->where('round', 8)->order('game_id ASC');
+			$games = $q->get();
+			if ($games) {
+				$losers = array();
+				foreach ($games as $game) {
+					if ($game['winner_id'] == $game['team1_id']) {
+						$losers[] = $game['team2_id'];
+					} else {
+						$losers[] = $game['team1_id'];
+					}
+				}
+				if (!empty($losers)) {
+					$matchups = array(
+						array(
+							'team1_id' => $losers[0],
+							'team2_id' => $losers[1],
+						)
+					);
+					$games = $this->generate_games($matchups);
+				}
+			}
+		} else if ($this->round == 10) {
+			$q = $this->api->db->dsql();
+			$q->table('game_scores')->field('winner_id')->where('round', 8)->order('game_id ASC');
+			$winners = $q->get();
+			if ($winners) {
+				$matchups = array(
+					array(
+						'team1_id' => $winners[0]['winner_id'],
+						'team2_id' => $winners[1]['winner_id'],
+					)
+				);
+				$games = $this->generate_games($matchups);
+			}
+		} else {
+			$segments = array();
+			$x = 0;
+			$wl = '';
+			if (count($team_data) % 2 != 0 && $this->round == 1) {
+				$team_data = array(999=>array('wins'=>0,'losses'=>0,'plus_minus'=>0,'sos'=>0,'protected'=>0)) + $team_data;
+			} else if (count($team_data) % 2 != 0 && $this->round > 1) {
+				$team_data = array(999=>array('wins'=>0,'losses'=>99,'plus_minus'=>-999,'sos'=>0,'protected'=>0)) + $team_data;
+			}
+			foreach ($team_data as $team) {
+				if ($wl != $team['wins'].'-'.$team['losses']) {
+					$wl = $team['wins'].'-'.$team['losses'];
+					$x++;
+				}
+				$segments[$x][] = $team['id'];//.' '.$team['wins'].'-'.$team['losses'].' '.$team['sos'].' '.$team['plus_minus'];
+			}
+			$segments = array_reverse($segments, true);
+			$n = count($segments);
+			for ($i=$n; $i>0; $i--) {
+				$segments[$i] = array_reverse($segments[$i]);
+			}
+			for ($i=$n; $i>0; $i--) {
+				if (count($segments[$i]) % 2 != 0) {
+					$move = $segments[$i][count($segments[$i])-1];
+					unset($segments[$i][count($segments[$i])-1]);
+					array_unshift($segments[$i-1], $move);
+				}
+			}
+
+			// $output = '';
+			// foreach ($segments as $x => $ids) {
+			// 	$output .= $x."\n";
+			// 	foreach ($ids as $id) {
+			// 		$output .= print_r($this->team_data[$id],1);
+			// 	}
+			// 	$output .= "\n\n";
+			// }
+			// $fh = fopen('/var/www/higgyapp/public_html/output.txt', 'a'); fputs($fh, "\n".date("Y-m-d H:i:s")."\n".print_r($output,1)); fclose($fh);
+
+			$games = array();
+			foreach ($segments as $record=>$ids) {
+				if (!empty($ids)) {
+					$matchups = $this->generate_matchups($ids);
+					$games = $this->generate_games($matchups);
+				}
 			}
 		}
 	}
@@ -259,7 +380,7 @@ class Model_Settings extends Model_Table {
 			$sort[$col4][$key] = $val[$col4];
 		}
 
-		array_multisort($sort[$col1], SORT_ASC, $sort[$col2], SORT_DESC, $sort[$col3], SORT_ASC, $sort[$col4], SORT_ASC, $arr);
+		array_multisort($sort[$col1], SORT_DESC, $sort[$col2], SORT_ASC, $sort[$col3], SORT_DESC, $sort[$col4], SORT_DESC, $arr);
 	}
 
 	private function ashuffle (&$arr) {

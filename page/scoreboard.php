@@ -23,7 +23,7 @@ class page_scoreboard extends Page {
 		$grid->addColumn('wins');
 		$grid->addColumn('losses');
 		$grid->addColumn('sos');
-		$grid->addColumn('differential');
+		$grid->addColumn('plus_minus');
 		$data = array();
 		$div_teams = $this->add('Model_Team')->addCondition('year_id',$year_id)->addCondition('checked_in',1);
 		foreach ($div_teams as $team) {
@@ -86,9 +86,9 @@ class page_scoreboard extends Page {
 					}
 				}
 			}
-			$data[] = array('id'=>$team['id'],'name'=>$team['name'],'wins'=>"$wins",'losses'=>"$losses",'sos'=>"$sos",'differential'=>"$plus_minus");
+			$data[] = array('id'=>$team['id'],'name'=>$team['name'],'wins'=>"$wins",'losses'=>"$losses",'sos'=>"$sos",'plus_minus'=>"$plus_minus");
 		}
-		array_sort_higgyball($data,"wins","losses","sos","differential");
+		array_sort_higgyball($data,"wins","losses","sos","plus_minus");
 		$i = 1;
 		foreach ($data as &$row) {
 			$row['rank'] = $i;
@@ -110,9 +110,7 @@ class page_scoreboard extends Page {
 		$q->table('game')->where('year_id',$year_id)->where('is_complete',0)->field('id');
 		$incompleteGames = $q->get();
 
-		if (!empty($incompleteGames)) {
-			$view->add('View_Error')->set('Please complete all games before starting the knockout tournament');
-		} else if ($round == 5) {
+		if ($round >= 5) {
 			$html = '
 				<table>
 					<tr>
@@ -202,6 +200,8 @@ class page_scoreboard extends Page {
 				</table>
 			';
 			$view->add('Html')->set($html);
+		} else if (!empty($incompleteGames)) {
+			$view->add('View_Error')->set('Please complete all games before starting the knockout tournament');
 		} else {
 			$view->add('View_Error')->set('Please complete all rounds before starting the knockout tournament');
 		}

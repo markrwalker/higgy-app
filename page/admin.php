@@ -62,7 +62,7 @@ class page_admin extends Page {
 		$m = $this->add('Model_Team');
 		$m->setOrder('name', 'asc')->setOrder('checked_in', 'asc')->setOrder('dropped_out', 'asc');
 		$crud = $tab->add('CRUD', array('allow_edit'=>false));
-		$crud->setModel($m,null,array('name','person1','person1_gender','person2','person2_gender','checked_in','dropped_out'))->addCondition('year_id',$year_id)->addCondition('id','!=',999);
+		$crud->setModel($m,null,array('name','person1','person1_gender','person2','person2_gender','protected','checked_in','dropped_out'))->addCondition('year_id',$year_id)->addCondition('id','!=',999);
 		if ($crud->isEditing('add')) {
 			$crud->form->getElement('division_id')->set(5)->js(true)->closest('div')->parent('div')->hide();;
 			$crud->form->getElement('year_id')->set($year_id)->js(true)->closest('div')->parent('div')->hide();;
@@ -120,7 +120,7 @@ class page_admin extends Page {
 
 		/**** Field Status view ****/
 		$view = $col2->add('View');
-		$fields = $this->add('Model_Field');
+		$fields = $this->add('Model_Field')->addCondition('active', 1);
 		$view->js(true)->addClass('refresh_field_view');
 		$view->js('refresh_field_view', $view->js()->reload());
 		$status = array();
@@ -258,7 +258,7 @@ class page_admin extends Page {
 		$team_form->model->load($_GET['team_id']);
 		$team_form->getElement('division_id')->js(true)->closest('div')->parent('div')->hide();
 		$team_form->getElement('year_id')->js(true)->closest('div')->parent('div')->hide();
-		$team_form->getElement('protected')->js(true)->closest('div')->parent('div')->hide();
+//		$team_form->getElement('protected')->js(true)->closest('div')->parent('div')->hide();
 		$team_form->addSubmit();
 
 		if ($team_form->isSubmitted()) {

@@ -14,6 +14,7 @@ class Model_Team extends Model_Table {
 		$this->addField('division_id')->refModel('Model_Division');
 		$this->addField('year_id')->refModel('Model_Year')->defaultValue($year_id);
 		$this->addField('protected')->type('boolean')->defaultValue(false);
+		$this->addField('winner')->type('int')->defaultValue(0);
 		$this->addField('checked_in')->type('boolean')->defaultValue(false);
 		$this->addField('dropped_out')->type('boolean')->defaultValue(false);
 		$this->addField('created')->defaultValue(date('Y-m-d H:i:s'))->type('datetime')->system(true);
