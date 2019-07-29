@@ -5,7 +5,8 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="inc/bootstrap-3.3.7.min.css">
 	<script src="inc/jquery-3.3.1.min.js"></script>
-	<script src="inc/bootstrap-3.3.7.min.js"></script>	<script>
+	<script src="inc/bootstrap-3.3.7.min.js"></script>
+	<script>
 		var source1 = new EventSource("bracket.php");
 		source1.onmessage = function(event) {
 			document.getElementById("left").innerHTML = event.data;
@@ -16,12 +17,21 @@
 			document.getElementById("right").innerHTML = event.data;
 			return false;
 		};
+
+		$(document).ready( function() {
+			function savescreen() {
+				$('body').fadeToggle(100);
+				$('body').fadeToggle(100);
+			}
+
+			setInterval(savescreen, 300000);
+		});
 	</script>
 	<style>
 		body {
 			overflow: hidden;
-			background-color: #fefad5;
-			margin-top: 30px;
+			background-color: #fff;
+			margin-top: 20px;
 		}
 		#logo {
 			height: 226px;
@@ -55,8 +65,8 @@
 			margin: auto;
 		}
 		.teams {
-			color: #171d99;
-			-webkit-text-stroke: 2px #ee8208;
+			color: #36b2fc;
+			-webkit-text-stroke: 2px #f81010;
 			font-size: 52px;
 			padding: 2px 0 !important;
 			font-weight: 1000;
@@ -67,10 +77,10 @@
 		}
 		.table-striped>tbody>tr:nth-child(even)>td, 
 		.table-striped>tbody>tr:nth-child(odd)>th {
-			background-color: #fefad5; 
+			background-color:#ccc;
 		}
 		.table-striped>tbody>tr:nth-child(odd)>td {
-			background-color: #f3d1b0; 
+			background-color: #36b2fc;
 		}
 		td {
 			font-weight: bold;

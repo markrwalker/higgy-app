@@ -13,7 +13,7 @@ class Model_Game extends Model_Table {
 		$this->addField('team2_score_id')->refModel('Model_Score','id')->hidden(true);
 		$this->addField('field_id')->refModel('Model_Field');
 		$this->addField('year_id')->refModel('Model_Year')->defaultValue($year_id)->hidden(true);
-		$this->addField('round')->type('int')->system(true);
+		$this->addField('round')->type('int');
 		$this->addField('is_complete')->type('boolean')->defaultValue(false);
 		$this->addField('created')->defaultValue(date('Y-m-d H:i:s'))->type('datetime')->system(true);
 		$this->addField('updated')->type('datetime')->system(true);
@@ -24,13 +24,13 @@ class Model_Game extends Model_Table {
 	function beforeInsert($m,$q) {
 		$team1_score_id = $this->api->db->dsql()
 			->table('score')
-			->set('score','0')
+			->set('score', null)
 			->do_insert()
 		;
 
 		$team2_score_id = $this->api->db->dsql()
 			->table('score')
-			->set('score','0')
+			->set('score', null)
 			->do_insert()
 		;
 

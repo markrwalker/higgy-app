@@ -1,4 +1,5 @@
 <?php
+
 class page_admin extends Page {
 	function initMainPage() {
 		parent::init();
@@ -57,21 +58,116 @@ class page_admin extends Page {
 		$compGamesCrud->grid->addQuickSearch(array('team1','team2'));
 		$compGamesCrud->grid->addColumn('expander','edit_score');
 
+		/**** Add Games tab ****/
+		// $addGamesTab = $gamesTabs->addTab('Add Games');
+		// $addGamesGrid = $addGamesTab->add('MyGrid');
+		// $addGamesGrid->addColumn('rank');
+		// $addGamesGrid->addColumn('playing', 'name');
+		// $addGamesGrid->addColumn('wins');
+		// $addGamesGrid->addColumn('losses');
+		// $addGamesGrid->addColumn('sos');
+		// $addGamesGrid->addColumn('plus_minus');
+		// $data = array();
+		// $div_teams = $this->add('Model_Team')->addCondition('year_id',$year_id)->addCondition('checked_in',1)->addCondition('dropped_out',0);
+		// foreach ($div_teams as $team) {
+		// 	$wins = 0;
+		// 	$losses = 0;
+		// 	$plus_minus = 0;
+		// 	$sos = 0;
+		// 	$team2_id = '';
+		// 	$div_games = $this->api->db->dsql()
+		// 		->table('game_scores')
+		// 		->field('team1_id')
+		// 		->field('team1_score')
+		// 		->field('team2_id')
+		// 		->field('team2_score')
+		// 		->where(array(array('team1_id',$team['id']),array('team2_id',$team['id'])))
+		// 		->get();
+		// 	foreach ($div_games as $game) {
+		// 		if ($game['team1_id'] == $team['id']) {
+		// 			$team2_id = $game['team2_id'];
+		// 			$plus_minus += $game['team1_score'];
+		// 			$plus_minus -= $game['team2_score'];
+		// 			if ($game['team1_score'] > $game['team2_score']) {
+		// 				$wins += 1;
+		// 			} else {
+		// 				$losses += 1;						
+		// 			}
+		// 		} elseif ($game['team2_id'] == $team['id']) {
+		// 			$team2_id = $game['team1_id'];
+		// 			$plus_minus += $game['team2_score'];
+		// 			$plus_minus -= $game['team1_score'];
+		// 			if ($game['team2_score'] > $game['team1_score']) {
+		// 				$wins += 1;
+		// 			} else {
+		// 				$losses += 1;						
+		// 			}
+		// 		}
+		// 		if (empty($team2_id)) {
+		// 			continue;
+		// 		} else {
+		// 			$opponent_games = $this->api->db->dsql()
+		// 				->table('game_scores')
+		// 				->field('team1_id')
+		// 				->field('team1_score')
+		// 				->field('team2_id')
+		// 				->field('team2_score')
+		// 				->where(array(array('team1_id',$team2_id),array('team2_id',$team2_id)))
+		// 				->get();
+		// 			//$opponent_games->debug();
+		// 			//echo '<pre>'.print_r($opponent_games,1).'</pre>'; die();
+		// 			foreach ($opponent_games as $game) {
+		// 				if ($game['team1_id'] == $team2_id) {
+		// 					if ($game['team1_score'] > $game['team2_score']) {
+		// 						$sos += 1;
+		// 					}
+		// 				} elseif ($game['team2_id'] == $team2_id) {
+		// 					if ($game['team2_score'] > $game['team1_score']) {
+		// 						$sos += 1;
+		// 					}
+		// 				}
+		// 			}
+		// 		}
+		// 	}
+		// 	$team_status = $this->api->db->dsql()->table('team')->field('*')->where('id', $team['id'])->where($this->api->db->dsql()->orExpr()->where('id', $this->api->db->dsql()->table('game')->field('team1_id')->where($this->api->db->dsql()->andExpr()->where('is_complete', '0')->where('team1_id = team.id')))->where('id', $this->api->db->dsql()->table('game')->field('team2_id')->where($this->api->db->dsql()->andExpr()->where('is_complete', '0')->where('team2_id = team.id'))))->fetch();
+		// 	$playing = !empty($team_status) ? true: false;
+		// 	$data[] = array('id'=>$team['id'],'name'=>$team['name'],'wins'=>"$wins",'losses'=>"$losses",'sos'=>"$sos",'plus_minus'=>"$plus_minus",'playing'=>$playing);
+		// }
+		// array_sort_higgyball($data,"wins","losses","sos","plus_minus");
+		// $i = 1;
+		// foreach ($data as &$row) {
+		// 	$row['rank'] = $i;
+		// 	$i++;
+		// }
+		// $addGamesGrid->setSource($data);
+		// $addGamesGrid->addColumn('expander','create_game');
+		// $addGamesGrid->js(true)->addClass('refresh_add_game_grid');
+		// $addGamesGrid->js('refresh_add_game_grid',$addGamesGrid->js()->reload());
+		// $addGamesTab->add('Button')->set('Refresh')->js('click', $addGamesGrid->js()->reload());
+
 		/**** Teams tab ****/
 		$tab = $tabs->addTab('Team Admin');
 		$m = $this->add('Model_Team');
 		$m->setOrder('name', 'asc')->setOrder('checked_in', 'asc')->setOrder('dropped_out', 'asc');
 		$crud = $tab->add('CRUD', array('allow_edit'=>false));
-		$crud->setModel($m,null,array('name','person1','person1_gender','person2','person2_gender','protected','checked_in','dropped_out'))->addCondition('year_id',$year_id)->addCondition('id','!=',999);
+		$crud->setModel($m,null,array('name','person1','person1_gender','person2','person2_gender','checked_in'))->addCondition('year_id',$year_id)->addCondition('id','!=',999);
 		if ($crud->isEditing('add')) {
 			$crud->form->getElement('division_id')->set(5)->js(true)->closest('div')->parent('div')->hide();;
 			$crud->form->getElement('year_id')->set($year_id)->js(true)->closest('div')->parent('div')->hide();;
 			$crud->form->getElement('protected')->js(true)->closest('div')->parent('div')->hide();
+			$crud->form->getElement('dropped_out')->js(true)->closest('div')->parent('div')->hide();
 		}
 		$crud->js(true)->addClass('refresh_team_crud');
 		$crud->js('refresh_team_crud')->reload();
 		if ($crud->grid) {
 			$crud->grid->addButton('Refresh Teams')->js('click',$crud->grid->js()->reload());
+			$crud->grid->addColumn('button','checkin', 'Check In/Out');
+			if($_GET['checkin']) {
+				$crud->grid->model->checkinTeam($_GET['checkin']);
+				$js[] = $crud->grid->js()->reload();
+				$js[] = $crud->js(true)->_selector('.refresh_team_crud')->trigger('refresh_team_crud');
+				$crud->js(null,$js)->execute();
+			}
 			$crud->grid->addColumn('expander','edit_team');
 		}
 
@@ -92,7 +188,23 @@ class page_admin extends Page {
 
 		/**** Years tab ****/
 		$tab = $tabs->addTab('Year Admin');
-		$tab->add('CRUD')->setModel('Year');
+		$yearCrud = $tab->add('CRUD');
+		$yearCrud->setModel('Year');
+		$yearCrud->js(true)->addClass('refresh_year_crud');
+		$yearCrud->js('refresh_year_crud',$yearCrud->grid->js()->reload());
+		if ($yearCrud->grid) {
+			$yearCrud->grid->addColumn('button', 'setcurrent', 'Set Current');
+			if ($_GET['setcurrent']) {
+				$yearCrud->grid->model->setCurrentYear($_GET['setcurrent']);
+				$js[] = $yearCrud->grid->js()->reload();
+				$js[] = $yearCrud->js(true)->_selector('.refresh_year_crud')->trigger('refresh_year_crud');
+				$js[] = $yearCrud->js(true)->_selector('.refresh_prog_game_crud')->trigger('refresh_prog_game_crud');
+				$js[] = $yearCrud->js(true)->_selector('.refresh_comp_game_crud')->trigger('refresh_comp_game_crud');
+				$js[] = $yearCrud->js(true)->_selector('.refresh_team_crud')->trigger('refresh_team_crud');
+				$js[] = $yearCrud->js(true)->_selector('.refresh_field_view')->trigger('refresh_field_view');
+				$yearCrud->js(null,$js)->execute();
+			}
+		}
 
 		/**** Column 2 ****/
 
@@ -127,14 +239,7 @@ class page_admin extends Page {
 		$i = 0;
 		foreach ($fields as $f) {
 			$status[$i]["field"] = $f['name'];
-			$status[$i]["status"] = 'Free';
-			$games = $this->add('Model_Game')->addCondition('field_id',$f['id']);
-			foreach ($games as $g) {
-				if ($g['is_complete'] == 0) {
-					$status[$i]["status"] = 'Busy';
-					break;
-				}
-			}
+			$status[$i]["status"] = !empty($f['inuse']) ? 'Busy' : 'Free';
 			$i++;
 		}
 		$view->add('Html')->set('<h2>Field Status</h2>');
@@ -192,8 +297,8 @@ class page_admin extends Page {
 		$score_form->setModel('Game');
 		$score_form->model->load($_GET['game_id']);
 
-		$score_form->getElement('team1_id')->model->addCondition('year_id',$year_id)->setOrder('name','asc');
-		$score_form->getElement('team2_id')->model->addCondition('year_id',$year_id)->setOrder('name','asc');
+		$score_form->getElement('team1_id')->disable()->model->addCondition('year_id',$year_id)->setOrder('name','asc');
+		$score_form->getElement('team2_id')->disable()->model->addCondition('year_id',$year_id)->setOrder('name','asc');
 
 		$score_form->getElement('is_complete')->set(true);
 		$score_form->addSeparator('span3');
@@ -243,7 +348,73 @@ class page_admin extends Page {
 
 		if ($score_form->isSubmitted()) {
 			$score_form->update();
-			$score_form->js(null,$this->js()->trigger('refresh_comp_game_crud'))->univ()->successMessage('Game Updated')->closeExpander()->execute();
+			$js[] = $score_form->js(true)->_selector('.refresh_prog_game_crud')->trigger('refresh_prog_game_crud');
+			$js[] = $score_form->js(true)->_selector('.refresh_comp_game_crud')->trigger('refresh_comp_game_crud');
+			$js[] = $score_form->js(true)->_selector('.refresh_field_view')->trigger('refresh_field_view');
+			$score_form->js(null,$js)->univ()->successMessage('Game Updated')->closeExpander()->execute();
+		}
+	}
+
+	/**** Create Game expander ****/
+	function page_create_game() {
+		$this->api->stickyGET('admin_id');
+		$year_id = $this->api->db->dsql()->table('year')->field('id')->where('current',1)->getOne();
+		$round = $this->api->db->dsql()->table('settings')->field('value')->where('setting', 'round')->getOne();
+		$team = $this->api->db->dsql()->table('team')->field('*')->where('id', $_GET['admin_id'])->where($this->api->db->dsql()->orExpr()->where('id', $this->api->db->dsql()->table('game')->field('team1_id')->where($this->api->db->dsql()->andExpr()->where('is_complete', '0')->where('team1_id = team.id')))->where('id', $this->api->db->dsql()->table('game')->field('team2_id')->where($this->api->db->dsql()->andExpr()->where('is_complete', '0')->where('team2_id = team.id'))))->fetch();
+		if (!empty($team)) {
+			$message = $this->add('View');
+			$message->add('Html')->set('<h2>This team is currently playing.</h2>');
+		} else {
+			$game_form = $this->add('Form');
+			$game_form->addClass('atk-row');
+			$game_form->addSeparator('span5');
+			$game_form->setModel('Game');
+
+			$game_form->getElement('team1_id')->setEmptyText(null)->model->addCondition('id', $_GET['admin_id']);
+			$game_form->getElement('team2_id')->model->addCondition('year_id', $year_id)->addCondition('id', '!=', $_GET['admin_id'])->addCondition('inplay1', 0)->addCondition('inplay2', 0)->setOrder('name','asc');
+			$game_form->getElement('is_complete')->js(true)->closest('div')->hide();
+			$game_form->getElement('field_id')->model->addCondition('inuse', 0);
+			$game_form->getElement('round')->set(++$round);
+
+			$game_form->addSeparator('span3');
+			$game_grid = $game_form->add('MyGrid');
+			$game_grid->addColumn('round');
+			$game_grid->addColumn('field');
+			$game_grid->addColumn('oppteam', 'opponent');
+			$q = $this->api->db->dsql();
+			$q->table('game_scores')
+				->field(array(
+					'round'=>'round',
+					'team1'=>'t1.name',
+					'team2'=>'t2.name',
+					'field'=>'field_id',
+					'winner'=>'w.name'
+				)
+			);
+			$q->field(
+				$q->expr('CASE WHEN team1_id = '.$_GET['admin_id'].' THEN t2.name ELSE t1.name END'
+			), 'opponent')
+				->join(array('t1'=>'team'), 'team1_id', 'inner')
+				->join(array('t2'=>'team'), 'team2_id', 'inner')
+				->join(array('w'=>'team'), 'winner_id', 'inner')
+				->where(
+					$q->orExpr()
+					->where('team1_id', $_GET['admin_id'])
+					->where('team2_id', $_GET['admin_id'])
+			);
+
+			$team_game_data = $q->get();
+			$game_grid->setSource($team_game_data);
+
+			$game_form->addSubmit();
+
+			if ($game_form->isSubmitted()) {
+				$game_form->update();
+				$js[] = $game_form->js(true)->_selector('.refresh_add_game_grid')->trigger('refresh_add_game_grid');
+				$js[] = $game_form->js(true)->_selector('.refresh_prog_game_crud')->trigger('refresh_prog_game_crud');
+				$js[] = $game_form->js(true)->_selector('.refresh_field_view')->trigger('refresh_field_view');
+				$game_form->js(null,$js)->univ()->successMessage('Game Added')->closeExpander()->execute();
+			}
 		}
 	}
 
@@ -268,18 +439,15 @@ class page_admin extends Page {
 	}
 
 }
-/*
-$this->api->stickyGET('id');
-$u = $this->add('Model_User')->load($_GET['id']);
-$crud = $this->add('CRUD');
-$crud->setModel($u->ref('Item'));
-if($crud->grid) {
-	$crud->grid->addColumn('button','found','Mark as Found');
-	if($_GET['found']) {
-		$crud->model->load($_GET['found']);
-		$crud->model->markAsFound();
-		$crud->js(null,$crud->grid->js()->reload())
-			->univ()->alert('Success')->execute();
+
+function array_sort_higgyball(&$arr, $col1, $col2, $col3, $col4) {
+	$sort = array();
+	foreach ($arr as $key=>$val) {
+		$sort[$col1][$key] = $val[$col1];
+		$sort[$col2][$key] = $val[$col2];
+		$sort[$col3][$key] = $val[$col3];
+		$sort[$col4][$key] = $val[$col4];
 	}
+
+	array_multisort($sort[$col1], SORT_DESC, $sort[$col2], SORT_ASC, $sort[$col3], SORT_DESC, $sort[$col4], SORT_DESC, $arr);
 }
-*/

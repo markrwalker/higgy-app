@@ -9,9 +9,9 @@ class Model_Vote extends Model_Table {
 		$this->addField('year_id')->hidden(true);
 		$this->addField('ip')->defaultValue($_SERVER['REMOTE_ADDR'])->hidden(true);
 		$this->addField('created')->type('datetime')->system(true);
-		$this->addExpression("votes", $this->dsql()
-			->field($this->dsql()->expr("count(*)"), "id")
-			->where("player", $this->getField("player"))
-        );
+		$this->addExpression('votes', $this->dsql()
+			->field($this->dsql()->expr('count(*)'), 'id')
+			->where('player', $this->getField('player'))
+		);
 	}
 }

@@ -11,4 +11,15 @@ class Model_Year extends Model_Table {
 
 		$this->hasMany('Team');
 	}
+
+	function setCurrentYear($year_id) {
+		if (!empty($year_id)) {
+			$q = $this->api->db->dsql();
+			$q->table('year')->where('current', 1)->field('id');
+			$old_year_id = $q->getOne();
+
+			$this->load($old_year_id)->set('current', 0)->save();
+			$this->load($year_id)->set('current', 1)->save();
+		}
+	}
 }

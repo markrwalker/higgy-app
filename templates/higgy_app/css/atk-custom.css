@@ -29,6 +29,20 @@ body {background-color: #bfbfbf;}
 
 .atk-form.atk-row .atk-buttons { text-align: left; }
 
-#higgy_app_scoreboard [data-id="13"] td {
+.atk-row > [class*="span"] { margin-left: 1.5%; }
+
+.span2 { width: 16%; }
+
+body, .ui-widget { font-size: 16px; }
+
+.ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button { font-size: 1.3em; }
+
+div#higgy_app_scoreboard_columns_view_columns_column_frame_grid > table > tbody > tr:nth-child(14) > td {
 	border-bottom: 3px solid red;
 }
+
+#higgy_app_mvp_columns_view_columns_column_3_frame_view_form_form label { width: 100%; }
+
+#higgy_app_mvp_columns_view_columns_column_3_frame_view_form_form .atk-form-field  { margin-left: 0; }
+
+#higgy_app_mvp_columns_view_columns_column_3_frame_view_form_form select { font-size: 1.3em; }

@@ -19,5 +19,19 @@ class Model_Team extends Model_Table {
 		$this->addField('dropped_out')->type('boolean')->defaultValue(false);
 		$this->addField('created')->defaultValue(date('Y-m-d H:i:s'))->type('datetime')->system(true);
 		$this->addField('updated')->type('datetime')->system(true);
+		// $this->addExpression('inplay1', $this->api->db->dsql()->table('team', 't')
+		// 	->field('count(*)')
+		// 	->where('id', $this->api->db->dsql()->table('game')->field('team1_id')->where($this->dsql()->andExpr()->where('is_complete', '0')->where('team1_id = team.id')))
+		// );
+		// $this->addExpression('inplay2', $this->api->db->dsql()->table('team', 't')
+		// 	->field('count(*)')
+		// 	->where('id', $this->api->db->dsql()->table('game')->field('team2_id')->where($this->dsql()->andExpr()->where('is_complete', '0')->where('team2_id = team.id')))
+		// );
+	}
+
+	function checkinTeam($team_id) {
+		$val = $this->load($team_id)->get('checked_in');
+		$opp = !$val;
+		$this->load($team_id)->set('checked_in', $opp)->save();
 	}
 }

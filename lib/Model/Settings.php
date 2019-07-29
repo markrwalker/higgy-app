@@ -1,5 +1,5 @@
 <?php
-ini_set('memory_limit', '256M');
+ini_set('memory_limit', '512M');
 ini_set('max_execution_time', 300);
 
 class Model_Settings extends Model_Table {
@@ -31,6 +31,10 @@ class Model_Settings extends Model_Table {
 	}
 
 	function startRound($settings_id) {
+		global $which, $save_segments, $error, $success;
+
+		$error = false;
+		$success = false;
 		$round = $this->load($settings_id)->get('value');
 		$this->round = ++$round;
 
@@ -109,7 +113,6 @@ class Model_Settings extends Model_Table {
 				$team1_data[$team['id']] = array('id'=>$team['id'],'name'=>$team['name'],'wins'=>"$team_wins",'losses'=>"$team_losses",'sos'=>"$team_sos",'plus_minus'=>"$team_plus_minus",'protected'=>$team['protected'],'history'=>$history,'fields'=>$fields);
 			}
 			$this->array_sort_higgyball($team1_data,"wins","losses","sos","plus_minus");
-			// $fh = fopen('/var/www/higgyapp/public_html/output.txt', 'a'); fputs($fh, print_r($team1_data,1)."\n"); fclose($fh); die();
 
 			foreach ($team1_data as $data) {
 				$this->team_data[$data['id']] = array(
@@ -126,6 +129,13 @@ class Model_Settings extends Model_Table {
 			}
 
 			$this->generate_round($this->team_data);
+			if ($error === true) {
+				$i = 0;
+				do {
+					$i++;
+					$this->generate_round($this->team_data, true);
+				} while ($success === false);
+			}
 
 			$this->load($settings_id)->set('value', $this->round)->save();
 			return true;
@@ -134,7 +144,11 @@ class Model_Settings extends Model_Table {
 		}
 	}
 
-	private function generate_round($team_data) {
+	private function generate_round($team_data, $retry = false) {
+		global $which, $save_segments, $error, $success;
+		if ($retry) {
+			$error = false;
+		}
 		if ($this->round == 6) {
 			$team_data= array_values($team_data);
 			$matchups = array(
@@ -164,10 +178,10 @@ class Model_Settings extends Model_Table {
 				),
 			);
 			$games = $this->generate_games($matchups);
-		} else  if ($this->round == 7) {
+		} else if ($this->round == 7) {
 			$team_data= array_values($team_data);
 			$q = $this->api->db->dsql();
-			$q->table('game_scores')->field('winner_id')->where('round', 6)->order('game_id ASC');
+			$q->table('game_scores')->field('winner_id')->where('round', 6)->where('year_id', $this->year_id)->order('game_id ASC');
 			$winners = $q->get();
 			if ($winners) {
 				$matchups = array(
@@ -190,9 +204,9 @@ class Model_Settings extends Model_Table {
 				);
 				$games = $this->generate_games($matchups);
 			}
-		} else  if ($this->round == 8) {
+		} else if ($this->round == 8) {
 			$q = $this->api->db->dsql();
-			$q->table('game_scores')->field('winner_id')->where('round', 7)->order('game_id ASC');
+			$q->table('game_scores')->field('winner_id')->where('round', 7)->where('year_id', $this->year_id)->order('game_id ASC');
 			$winners = $q->get();
 			if ($winners) {
 				$matchups = array(
@@ -209,7 +223,7 @@ class Model_Settings extends Model_Table {
 			}
 		} else if ($this->round == 9) {
 			$q = $this->api->db->dsql();
-			$q->table('game_scores')->field('*')->where('round', 8)->order('game_id ASC');
+			$q->table('game_scores')->field('*')->where('round', 8)->where('year_id', $this->year_id)->order('game_id ASC');
 			$games = $q->get();
 			if ($games) {
 				$losers = array();
@@ -232,7 +246,7 @@ class Model_Settings extends Model_Table {
 			}
 		} else if ($this->round == 10) {
 			$q = $this->api->db->dsql();
-			$q->table('game_scores')->field('winner_id')->where('round', 8)->order('game_id ASC');
+			$q->table('game_scores')->field('winner_id')->where('round', 8)->where('year_id', $this->year_id)->order('game_id ASC');
 			$winners = $q->get();
 			if ($winners) {
 				$matchups = array(
@@ -244,55 +258,81 @@ class Model_Settings extends Model_Table {
 				$games = $this->generate_games($matchups);
 			}
 		} else {
-			$segments = array();
-			$x = 0;
-			$wl = '';
-			if (count($team_data) % 2 != 0 && $this->round == 1) {
-				$team_data = array(999=>array('wins'=>0,'losses'=>0,'plus_minus'=>0,'sos'=>0,'protected'=>0)) + $team_data;
-			} else if (count($team_data) % 2 != 0 && $this->round > 1) {
-				$team_data = array(999=>array('wins'=>0,'losses'=>99,'plus_minus'=>-999,'sos'=>0,'protected'=>0)) + $team_data;
-			}
-			foreach ($team_data as $team) {
-				if ($wl != $team['wins'].'-'.$team['losses']) {
-					$wl = $team['wins'].'-'.$team['losses'];
-					$x++;
+			if (!$retry) {
+				$segments = array();
+				$x = 0;
+				$wl = '';
+				if (count($team_data) % 2 != 0 && $this->round == 1) {
+					$team_data = array(999=>array('wins'=>0,'losses'=>0,'plus_minus'=>0,'sos'=>0,'protected'=>0)) + $team_data;
+				} else if (count($team_data) % 2 != 0 && $this->round > 1) {
+					$team_data = array(999=>array('wins'=>0,'losses'=>99,'plus_minus'=>-999,'sos'=>0,'protected'=>0)) + $team_data;
 				}
-				$segments[$x][] = $team['id'];//.' '.$team['wins'].'-'.$team['losses'].' '.$team['sos'].' '.$team['plus_minus'];
-			}
-			$segments = array_reverse($segments, true);
-			$n = count($segments);
-			for ($i=$n; $i>0; $i--) {
-				$segments[$i] = array_reverse($segments[$i]);
-			}
-			for ($i=$n; $i>0; $i--) {
-				if (count($segments[$i]) % 2 != 0) {
-					$move = $segments[$i][count($segments[$i])-1];
-					unset($segments[$i][count($segments[$i])-1]);
-					array_unshift($segments[$i-1], $move);
+				foreach ($team_data as $team) {
+					if ($wl != $team['wins'].'-'.$team['losses']) {
+						$wl = $team['wins'].'-'.$team['losses'];
+						$x++;
+					}
+					$segments[$x][] = $team['id'];//.' '.$team['wins'].'-'.$team['losses'].' '.$team['sos'].' '.$team['plus_minus'];
+				}
+				$segments = array_reverse($segments, true);
+				$n = count($segments);
+				for ($i=$n; $i>0; $i--) {
+					$segments[$i] = array_reverse($segments[$i]);
+				}
+				for ($i=$n; $i>0; $i--) {
+					if (count($segments[$i]) % 2 != 0) {
+						$move = $segments[$i][count($segments[$i])-1];
+						unset($segments[$i][count($segments[$i])-1]);
+						array_unshift($segments[$i-1], $move);
+					}
+				}
+			} else if ($retry && !empty($save_segments)) {
+				$segments = $save_segments;
+				if (!empty($which)) {
+					$move1 = $segments[$which+1][count($segments[$which+1])-1];
+					unset($segments[$which+1][count($segments[$which+1])-1]);
+					array_unshift($segments[$which], $move1);
+					$move2 = $segments[$which+1][count($segments[$which+1])-1];
+					unset($segments[$which+1][count($segments[$which+1])-1]);
+					array_unshift($segments[$which], $move2);
+					$which = '';
+					$save_segments = $segments;
 				}
 			}
 
 			// $output = '';
 			// foreach ($segments as $x => $ids) {
-			// 	$output .= $x."\n";
+			// 	$output .= 'segment '.$x."\n";
 			// 	foreach ($ids as $id) {
 			// 		$output .= print_r($this->team_data[$id],1);
 			// 	}
 			// 	$output .= "\n\n";
 			// }
-			// $fh = fopen('/var/www/higgyapp/public_html/output.txt', 'a'); fputs($fh, "\n".date("Y-m-d H:i:s")."\n".print_r($output,1)); fclose($fh);
 
 			$games = array();
-			foreach ($segments as $record=>$ids) {
+			$matchups = array();
+			foreach ($segments as $segment => $ids) {
 				if (!empty($ids)) {
-					$matchups = $this->generate_matchups($ids);
-					$games = $this->generate_games($matchups);
+					$seg_matchups = $this->generate_matchups($ids);
+					if ($error) {
+						$which = $segment;
+						$save_segments = $segments;
+						$seg_matchups = '';
+					}
+					if (!empty($seg_matchups)) {
+						$matchups = array_merge($matchups, $seg_matchups);
+					}
 				}
+			}
+			if (!empty($matchups) && !$error) {
+				$success = true;
+				$games = $this->generate_games($matchups);
 			}
 		}
 	}
 
 	private function generate_matchups($ids) {
+		global $error;
 
 		$check = false;
 		$matchups = array();
@@ -303,6 +343,10 @@ class Model_Settings extends Model_Table {
 				if ($ids[$i] != 999 && $ids[$i+1] != 999 && (in_array($ids[$i], $this->team_data[$ids[$i+1]]['history']) || in_array($ids[$i+1], $this->team_data[$ids[$i]]['history']))) {
 					// the opponents have played each other already
 					$matchups = array();
+					if ($n == 2) {
+						$error = true;
+						$check = true;
+					}
 					break;
 				}
 				if ($this->round == 1) {

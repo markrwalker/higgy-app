@@ -13,26 +13,31 @@ class page_mvp extends Page {
 		$q->table('settings')->where('setting','mvp_voting')->field('value');
 		$voting_enabled = $q->getOne();
 
-		/**** Column 1 ****/
 		$columns = $this->add('Columns');
+
+		/**** Column 1 ****/
 		$col1 = $columns->addColumn(5)->add('Frame')->setTitle('Female Votes');
 		$m = $this->add('Model_Vote');
 		$m->setOrder('votes','desc');
 		$female_grid = $col1->add('Grid');
-		$female_grid->setModel($m)->addCondition('gender','F')->addCondition('year_id', $year_id);
+		$female_button = $col1->add('Button')->set('Toggle')->js('click', $female_grid->js()->toggle());
+		$female_grid->setModel($m)->addCondition('gender','F')->addCondition('year_id', $this->year_id);
 		$female_grid->dq->group('name');
 		$female_grid->js(true)->addClass('refresh_mvp_female_grid');
 		$female_grid->js('refresh_mvp_female_grid', $female_grid->js()->reload());
+		$female_grid->js(true)->hide();
 
 		/**** Column 2 ****/
-		$col2 = $columns->addColumn(5)->add('Frame')->setTitle('Male Votes');;
+		$col2 = $columns->addColumn(5)->add('Frame')->setTitle('Male Votes');
 		$m = $this->add('Model_Vote');
 		$m->setOrder('votes','desc');
 		$male_grid = $col2->add('Grid');
-		$male_grid->setModel($m)->addCondition('gender','M')->addCondition('year_id', $year_id);
+		$male_button = $col2->add('Button')->set('Toggle')->js('click', $male_grid->js()->toggle());
+		$male_grid->setModel($m)->addCondition('gender','M')->addCondition('year_id', $this->year_id);
 		$male_grid->dq->group('name');
 		$male_grid->js(true)->addClass('refresh_mvp_male_grid');
 		$male_grid->js('refresh_mvp_male_grid', $male_grid->js()->reload());
+		$male_grid->js(true)->hide();
 
 		/**** Column 3 ****/
 		$col3 = $columns->addColumn(2)->add('Frame');

@@ -9,6 +9,7 @@ class Model_Game_Scores extends Model_Table {
 		$this->addField('team1_score');
 		$this->addField('team2');
 		$this->addField('team2_score');
-		$this->addField('division_id')->refModel('Model_Division');
+		$this->addField('division_id')->refModel('Model_Division')->hidden(true);
+		$this->addField('winner_id')->refModel('Model_Team');
 	}
 }

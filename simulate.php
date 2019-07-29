@@ -3,14 +3,14 @@
 	ini_set('max_execution_time', 300);
 	ini_set('display_errors',1);
 	error_reporting(E_ALL);
-	require_once('mobile/config.php');
+	require_once('display/inc/config.php');
 	global $year_id;
-	$year_id = 5;
+	$year_id = 7;
 
 	$games = array();
 	$sql1 = "SELECT * FROM `game` WHERE `year_id` = $year_id AND `is_complete` = 0";
-	$result1 = mysql_query($sql1);
-	while ($row = mysql_fetch_assoc($result1)) {
+	$result1 = mysqli_query($db, $sql1);
+	while ($row = mysqli_fetch_assoc($result1)) {
 		$games[] = $row;
 	}
 	//echo '<pre>'.print_r($games,1).'</pre>'; die();
@@ -34,9 +34,9 @@
 			$w = 12;
 			$l = 0;
 		}
-		mysql_query("UPDATE `score` SET `score` = $w WHERE `id` = ".$game['team'.$winner.'_score_id']);
-		mysql_query("UPDATE `score` SET `score` = $l WHERE `id` = ".$game['team'.$loser.'_score_id']);
-		if (mysql_query("UPDATE `game` SET `is_complete` = 1 WHERE `id` = ".$game['id'])) {
+		mysqli_query($db, "UPDATE `score` SET `score` = $w WHERE `id` = ".$game['team'.$winner.'_score_id']);
+		mysqli_query($db, "UPDATE `score` SET `score` = $l WHERE `id` = ".$game['team'.$loser.'_score_id']);
+		if (mysqli_query($db, "UPDATE `game` SET `is_complete` = 1 WHERE `id` = ".$game['id'])) {
 			echo 'Updated '.$game['id'].'<br>';
 		} else {
 			echo 'Failed '.$game['id'].'<br>';

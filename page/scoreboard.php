@@ -1,4 +1,5 @@
 <?php
+
 class page_scoreboard extends Page {
 	function initMainPage() {
 		parent::init();
@@ -25,7 +26,7 @@ class page_scoreboard extends Page {
 		$grid->addColumn('sos');
 		$grid->addColumn('plus_minus');
 		$data = array();
-		$div_teams = $this->add('Model_Team')->addCondition('year_id',$year_id)->addCondition('checked_in',1);
+		$div_teams = $this->add('Model_Team')->addCondition('year_id',$year_id)->addCondition('checked_in',1)->addCondition('dropped_out', 0);
 		foreach ($div_teams as $team) {
 			$wins = 0;
 			$losses = 0;
@@ -95,7 +96,7 @@ class page_scoreboard extends Page {
 			$i++;
 		}
 		$grid->setSource($data);
-		// $grid->addColumn('expander','view_matches');
+		$grid->addColumn('expander','view_matches');
 
 		/**** Column 2 ****/
 		$col2 = $columns->addColumn(3)->add('Frame')->setTitle('Knockout Tournament');
@@ -110,7 +111,7 @@ class page_scoreboard extends Page {
 		$q->table('game')->where('year_id',$year_id)->where('is_complete',0)->field('id');
 		$incompleteGames = $q->get();
 
-		if ($round >= 5) {
+		if ($round >= 5 && empty($incompleteGames)) {
 			$html = '
 				<table>
 					<tr>
@@ -215,13 +216,37 @@ class page_scoreboard extends Page {
 		$this->api->stickyGET('scoreboard_id');
 		$year_id = $this->api->db->dsql()->table('year')->field('id')->where('current',1)->getOne();
 
-		$match_form = $this->add('Form');
-		$match_form->addClass('atk-row');
-		$match_form->addSeparator('span5');
-		$match_form->setModel('Team');
-		$match_form->model->load($_GET['scoreboard_id']);
-	}
+		$match_grid = $this->add('MyGrid');
+		$match_grid->addColumn('round');
+		$match_grid->addColumn('field');
+		$match_grid->addColumn('team', 'team1', 'Team 1');
+		$match_grid->addColumn('team1_score');
+		$match_grid->addColumn('team', 'team2', 'Team 2');
+		$match_grid->addColumn('team2_score');
 
+		$q = $this->api->db->dsql();
+		$q->table('game_scores')
+			->field(array(
+				'round'=>'round',
+				'team1'=>'t1.name',
+				'team1_score'=>'team1_score',
+				'team2'=>'t2.name',
+				'team2_score'=>'team2_score',
+				'field'=>'field_id',
+				'winner'=>'w.name')
+			)
+			->join(array('t1'=>'team'), 'team1_id', 'inner')
+			->join(array('t2'=>'team'), 'team2_id', 'inner')
+			->join(array('w'=>'team'), 'winner_id', 'inner')
+			->where(
+				$q->orExpr()
+				->where('team1_id', $_GET['scoreboard_id'])
+				->where('team2_id', $_GET['scoreboard_id'])
+			);
+		$team_game_data = $q->get();
+
+		$match_grid->setSource($team_game_data);
+	}
 }
 
 function array_sort_higgyball(&$arr, $col1, $col2, $col3, $col4) {

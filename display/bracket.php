@@ -15,6 +15,7 @@ if ((int)$current_round > 5) {
 
 	if (!empty($team_data)) {
 		$result .= '<tbody>';
+		$count = count($team_data);
 		foreach ($team_data as $team) {
 			$trophies = '';
 			if ($team['winner']) {
@@ -40,10 +41,19 @@ if ((int)$current_round > 5) {
 			$result .= '<td class="round">'.$team['rounds'][5].'</td>';
 			$result .= '</tr>';
 		}
+		if ($count < 28) {
+			for ($i=0; $i<28-$count; $i++) {
+				$result .= '<tr><td colspan="8">&nbsp;</td></tr>';
+			}
+		}
 		$result .= '</tbody></table>';
 	} else {
 		// $result = '<tbody><tr><td colspan="10" style="text-align: center;"<h2><em>No teams checked in</em></h2></tr></tbody></table>';
-		$result .= '<tbody><tr><td colspan="8" style="text-align: center;"<h2><em>No teams have checked in yet.</em></h2></tr></tbody></table>';
+		$result .= '<tbody><tr><td colspan="8" style="text-align: center;"<h2><em>No teams have checked in yet.</em></h2></tr>';
+		for ($i=0; $i<27; $i++) {
+			$result .= '<tr><td colspan="8">&nbsp;</td></tr>';
+		}
+		$result .= '</tbody></table>';
 	}
 }
 
